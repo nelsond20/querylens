@@ -1,0 +1,53 @@
+<div class="app-shell">
+  <header class="app-header">
+    <span class="app-title">QueryLens</span>
+    <button class="btn-share" (click)="shareUrl()" title="Copy shareable URL">Share</button>
+  </header>
+
+  <main class="app-body">
+    <aside class="panel-left">
+      <app-dataset-selector />
+      <app-query-builder />
+      <app-query-editor />
+
+      <div class="query-actions">
+        <button class="btn-run" (click)="store.executeQuery()" [disabled]="store.isExecuting()">
+          {{ store.isExecuting() ? 'Running...' : 'Run Query' }}
+        </button>
+        <button class="btn-clear" (click)="store.clearQuery()">Clear</button>
+      </div>
+    </aside>
+
+    <section class="panel-right">
+      <app-results-table class="results-section" />
+      <app-transform-panel />
+
+      <div class="tabs-secondary">
+        <button
+          class="tab"
+          [class.active]="store.activeTab() === 'history'"
+          (click)="store.hydrateFrom({ activeTab: 'history' })"
+        >
+          History
+        </button>
+        <button
+          class="tab"
+          [class.active]="store.activeTab() === 'diff'"
+          (click)="store.hydrateFrom({ activeTab: 'diff' })"
+        >
+          Diff
+        </button>
+      </div>
+
+      <div class="tab-content">
+        @if (store.activeTab() === 'history') {
+          <app-history-panel />
+        }
+
+        @if (store.activeTab() === 'diff') {
+          <app-diff-panel />
+        }
+      </div>
+    </section>
+  </main>
+</div>

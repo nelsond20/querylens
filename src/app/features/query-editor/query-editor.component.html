@@ -1,0 +1,16 @@
+<div class="editor">
+  <span class="label">JSON</span>
+  <textarea
+    class="textarea"
+    [class.has-error]="store.rawQueryError()"
+    [value]="store.rawQuery()"
+    (input)="onInput($event)"
+    spellcheck="false"
+    autocomplete="off"
+    rows="8"
+  ></textarea>
+
+  @if (store.rawQueryError()) {
+    <span class="error">{{ store.rawQueryError() }}</span>
+  }
+</div>

@@ -1,0 +1,37 @@
+<div class="group" [class.nested]="depth > 0">
+  <div class="group-header">
+    <button class="btn-op" (click)="toggleOp()">{{ group.op }}</button>
+    <span class="group-label">group</span>
+    @if (depth > 0) {
+      <button class="btn-remove-group" (click)="remove.emit()" title="Remove group">x</button>
+    }
+  </div>
+
+  <div class="group-children">
+    @for (child of group.children; track $index) {
+      @if (isCondition(child)) {
+        <app-filter-condition
+          [condition]="child"
+          [fields]="fields"
+          (conditionChange)="updateChild($index, $event)"
+          (remove)="removeChild($index)"
+        />
+      }
+
+      @if (isGroup(child)) {
+        <app-filter-group
+          [group]="child"
+          [fields]="fields"
+          [depth]="depth + 1"
+          (groupChange)="updateChild($index, $event)"
+          (remove)="removeChild($index)"
+        />
+      }
+    }
+  </div>
+
+  <div class="group-actions">
+    <button class="btn-add" (click)="addCondition()">+ condition</button>
+    <button class="btn-add" (click)="addGroup()">+ group</button>
+  </div>
+</div>

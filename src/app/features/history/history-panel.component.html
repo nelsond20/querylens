@@ -1,0 +1,31 @@
+<div class="history">
+  <div class="save-row">
+    <input
+      class="input"
+      type="text"
+      placeholder="Name to save..."
+      [value]="saveName()"
+      (input)="onNameInput($event)"
+    />
+    <button class="btn-save" (click)="save()" [disabled]="!saveName().trim()">Save</button>
+  </div>
+
+  @if (historyStore.entries().length === 0) {
+    <div class="empty">No saved queries</div>
+  } @else {
+    <div class="entries">
+      @for (entry of historyStore.entries(); track entry.id) {
+        <div class="entry">
+          <div class="entry-info">
+            <span class="entry-name">{{ entry.name }}</span>
+            <span class="entry-meta">{{ entry.datasetId }} · {{ entry.savedAt | date: 'dd/MM/yy HH:mm' }}</span>
+          </div>
+          <div class="entry-actions">
+            <button class="btn-load" (click)="load(entry.id)">Load</button>
+            <button class="btn-delete" (click)="delete(entry.id)">x</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

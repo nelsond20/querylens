@@ -1,0 +1,8 @@
+<div class="selector">
+  <label class="label">Dataset</label>
+  <select class="select" [value]="store.selectedDatasetId()" (change)="select($any($event.target).value)">
+    @for (dataset of datasets; track dataset.id) {
+      <option [value]="dataset.id">{{ dataset.name }}</option>
+    }
+  </select>
+</div>

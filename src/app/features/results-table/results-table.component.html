@@ -1,0 +1,42 @@
+<div class="table-wrapper">
+  <div class="table-header">
+    <span class="result-count">{{ store.resultCount() }} results</span>
+
+    @if (store.displayedResults().length > 0) {
+      <div class="export-actions">
+        <button class="btn-export" (click)="exportCsv()">CSV</button>
+        <button class="btn-export" (click)="exportJson()">JSON</button>
+      </div>
+    }
+  </div>
+
+  @if (store.displayedResults().length === 0) {
+    <div class="empty-state">
+      <span>Run a query to see results</span>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="table table-head">
+        <thead>
+          <tr>
+            @for (column of columns; track column) {
+              <th>{{ columnLabels[column] }}</th>
+            }
+          </tr>
+        </thead>
+      </table>
+
+      <cdk-virtual-scroll-viewport itemSize="36" class="viewport">
+        <table class="table">
+          <tbody>
+            <tr *cdkVirtualFor="let row of store.displayedResults()">
+              @for (column of columns; track column) {
+                <td>{{ row[column] }}</td>
+              }
+            </tr>
+          </tbody>
+        </table>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  }
+</div>
