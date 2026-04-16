@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { AppModeService } from './core/app-mode.service';
+import { AppMode, AppModeService } from './core/app-mode.service';
 import { PrivacyConsentService } from './core/privacy-consent.service';
 
 @Component({
@@ -26,19 +26,10 @@ export class AppComponent implements OnInit {
     });
   }
 
-  protected playDemo(): void {
-    this.appMode.setMode('demo');
+  protected setExperience(mode: AppMode): void {
+    this.appMode.setMode(mode);
     this.router.navigate(['/workspace'], {
-      queryParams: { mode: 'demo' },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  protected switchToLive(): void {
-    this.appMode.setMode('live');
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { mode: 'live' },
+      queryParams: { mode },
       queryParamsHandling: 'merge',
     });
   }

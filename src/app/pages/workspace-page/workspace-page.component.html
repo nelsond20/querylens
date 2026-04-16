@@ -1,4 +1,4 @@
-<main class="workspace-body">
+<main class="workspace-body" [class.demo-mode]="isDemoMode()" [class.live-mode]="!isDemoMode()">
   <aside class="panel-left">
     <section class="intro-panel">
       <h2 class="section-title">Current Dataset</h2>
@@ -7,7 +7,7 @@
     </section>
 
     @if (isDemoMode()) {
-      <section class="preset-panel">
+      <section class="preset-panel mode-switch-card">
         <div class="section-head">
           <h2 class="section-title">Quick Scenario Lab</h2>
           <span class="section-caption">One click to run realistic analysis flows</span>
@@ -28,7 +28,9 @@
     }
 
     @if (!isDemoMode()) {
-      <app-data-sources-panel />
+      <div class="mode-switch-card">
+        <app-data-sources-panel />
+      </div>
     }
 
     <app-dataset-selector [mode]="mode()" />
@@ -72,31 +74,28 @@
     <app-results-table class="results-section" />
     <app-transform-panel />
 
-    <div class="tabs-secondary">
-      <button
-        class="tab"
-        [class.active]="store.activeTab() === 'history'"
-        (click)="store.hydrateFrom({ activeTab: 'history' })"
-      >
-        Query History
+    <section class="fold-panel">
+      <button class="fold-toggle" (click)="toggleHistory()">
+        <span>Query History</span>
+        <span class="chevron">{{ historyExpanded() ? '▲' : '▼' }}</span>
       </button>
-      <button
-        class="tab"
-        [class.active]="store.activeTab() === 'diff'"
-        (click)="store.hydrateFrom({ activeTab: 'diff' })"
-      >
-        Diff Analysis
+      @if (historyExpanded()) {
+        <div class="fold-body">
+          <app-history-panel />
+        </div>
+      }
+    </section>
+
+    <section class="fold-panel">
+      <button class="fold-toggle" (click)="toggleDiff()">
+        <span>Diff Analysis</span>
+        <span class="chevron">{{ diffExpanded() ? '▲' : '▼' }}</span>
       </button>
-    </div>
-
-    <div class="tab-content">
-      @if (store.activeTab() === 'history') {
-        <app-history-panel />
+      @if (diffExpanded()) {
+        <div class="fold-body">
+          <app-diff-panel />
+        </div>
       }
-
-      @if (store.activeTab() === 'diff') {
-        <app-diff-panel />
-      }
-    </div>
+    </section>
   </section>
 </main>

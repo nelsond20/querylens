@@ -1,12 +1,11 @@
 <div class="root-shell">
   <header class="root-header">
-    <div class="header-brand">
-      <span class="header-eyebrow">Local-First Analytics</span>
-      <h1 class="header-title">QueryLens</h1>
-      <p class="header-privacy-note">All processing stays in your browser. No data is sent to QueryLens servers.</p>
-    </div>
+    <div class="header-main">
+      <div class="brand-lockup">
+        <h1 class="header-title">QueryLens</h1>
+        <p class="header-subtitle">Local-first analytics workspace</p>
+      </div>
 
-    <div class="header-controls">
       <nav class="main-nav">
         <a
           routerLink="/workspace"
@@ -18,13 +17,21 @@
         </a>
         <a routerLink="/settings" queryParamsHandling="merge" routerLinkActive="active">Settings</a>
       </nav>
+    </div>
 
-      <div class="mode-controls">
-        <span class="mode-pill">Mode: {{ appMode.mode() === 'demo' ? 'Demo' : 'Live' }}</span>
-        <button class="btn-demo" (click)="playDemo()">Play Demo</button>
-        @if (appMode.mode() === 'demo') {
-          <button class="btn-live" (click)="switchToLive()">Live Mode</button>
-        }
+    <div class="header-rail">
+      <p class="header-privacy-note">
+        <span class="privacy-dot"></span>
+        All processing stays in your browser. No data is sent to QueryLens servers.
+      </p>
+
+      <div class="experience-switch" role="group" aria-label="Experience mode">
+        <button class="switch-btn" [class.active]="appMode.mode() === 'demo'" (click)="setExperience('demo')">
+          Play Demo
+        </button>
+        <button class="switch-btn" [class.active]="appMode.mode() === 'live'" (click)="setExperience('live')">
+          Live Mode
+        </button>
       </div>
     </div>
   </header>
