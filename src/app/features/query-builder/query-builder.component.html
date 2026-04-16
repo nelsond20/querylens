@@ -1,0 +1,9 @@
+<div class="builder">
+  <span class="label">Filters</span>
+  <app-filter-group
+    [group]="store.filterTree()"
+    [fields]="fields"
+    [depth]="0"
+    (groupChange)="updateTree($event)"
+  />
+</div>

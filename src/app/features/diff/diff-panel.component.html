@@ -1,0 +1,53 @@
+<div class="diff-panel">
+  <div class="controls">
+    <span class="label">Compare with history</span>
+    <select
+      class="select"
+      [value]="selectedHistoryId()"
+      (change)="selectedHistoryId.set($any($event.target).value)"
+    >
+      <option value="">- Select -</option>
+      @for (entry of historyStore.entries(); track entry.id) {
+        <option [value]="entry.id">{{ entry.name }} ({{ entry.datasetId }})</option>
+      }
+    </select>
+  </div>
+
+  @if (diffResult(); as result) {
+    <div class="stats">
+      <span class="stat added">+{{ result.added.length }} added</span>
+      <span class="stat removed">-{{ result.removed.length }} removed</span>
+      <span class="stat unchanged">{{ result.unchanged.length }} unchanged</span>
+    </div>
+
+    <div class="split">
+      <div class="side">
+        <div class="side-label">Historical</div>
+        <div class="rows">
+          @for (row of historicalRows(); track $index) {
+            <div class="row-item">
+              @for (column of columns; track column) {
+                <span class="cell">{{ row[column] }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="side-label">Current</div>
+        <div class="rows">
+          @for (row of queryStore.displayedResults(); track $index) {
+            <div class="row-item">
+              @for (column of columns; track column) {
+                <span class="cell">{{ row[column] }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="empty">Select a history entry to compare</div>
+  }
+</div>

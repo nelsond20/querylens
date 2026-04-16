@@ -1,0 +1,40 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+}
+
+.textarea {
+  width: 100%;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #e6edf3;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #58a6ff;
+}
+
+.textarea.has-error {
+  border-color: #f85149;
+}
+
+.error {
+  font-size: 0.75rem;
+  color: #f85149;
+}

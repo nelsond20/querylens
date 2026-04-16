@@ -1,0 +1,78 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.5rem;
+  background: #0d1117;
+}
+
+.group.nested {
+  border-color: #1f6feb;
+  background: #0d1117cc;
+  margin-left: 0.75rem;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-op {
+  background: #1f6feb22;
+  border: 1px solid #1f6feb;
+  border-radius: 4px;
+  color: #58a6ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.btn-op:hover {
+  background: #1f6feb44;
+}
+
+.group-label {
+  font-size: 0.7rem;
+  color: #8b949e;
+  text-transform: uppercase;
+}
+
+.btn-remove-group {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #f85149;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.group-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.group-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-add {
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  color: #8b949e;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
