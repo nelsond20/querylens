@@ -6,4 +6,5 @@ export interface Dataset {
   description: string;
   fields: FieldDefinition[];
   rows: Record<string, unknown>[];
+  source: 'built-in' | 'file' | 'api';
 }

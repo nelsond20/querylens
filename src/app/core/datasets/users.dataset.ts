@@ -18,15 +18,16 @@ const rows = Array.from({ length: 500 }, (_, i) => ({
 
 export const usersDataset: Dataset = {
   id: 'users',
-  name: 'Usuarios',
-  description: 'Dataset de usuarios de e-commerce (500 filas)',
+  name: 'Users',
+  description: 'E-commerce user activity snapshot (500 rows)',
   fields: [
     { key: 'id', label: 'ID', type: 'string' },
-    { key: 'name', label: 'Nombre', type: 'string' },
+    { key: 'name', label: 'Name', type: 'string' },
     { key: 'email', label: 'Email', type: 'string' },
-    { key: 'role', label: 'Rol', type: 'string' },
-    { key: 'status', label: 'Estado', type: 'string' },
-    { key: 'createdAt', label: 'Creado el', type: 'date' },
+    { key: 'role', label: 'Role', type: 'string' },
+    { key: 'status', label: 'Status', type: 'string' },
+    { key: 'createdAt', label: 'Created At', type: 'date' },
   ],
   rows,
+  source: 'built-in',
 };

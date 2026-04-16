@@ -1,0 +1,144 @@
+.data-sources {
+  border: 1px solid #26395a;
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: #0f1a2c99;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.title {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #cdddf7;
+}
+
+.caption {
+  font-size: 0.73rem;
+  color: #8ea2ca;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.block-title {
+  font-size: 0.7rem;
+  color: #9ab0d6;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.file-input {
+  background: #111d31;
+  border: 1px dashed #325181;
+  border-radius: 8px;
+  color: #c6d9fb;
+  font-size: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+}
+
+.file-input input {
+  display: none;
+}
+
+.input,
+.textarea {
+  background: #111d31;
+  border: 1px solid #2b3f64;
+  border-radius: 8px;
+  color: #e6edf3;
+  font-size: 0.76rem;
+  padding: 0.38rem 0.5rem;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #4b8de9;
+}
+
+.btn-fetch {
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2d7ddf, #3e9bff);
+  color: #f8fbff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.42rem 0.6rem;
+  cursor: pointer;
+}
+
+.btn-fetch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.message {
+  font-size: 0.74rem;
+}
+
+.error {
+  color: #ff9f9f;
+}
+
+.success {
+  color: #81d9ab;
+}
+
+.empty {
+  font-size: 0.74rem;
+  color: #8ea2ca;
+}
+
+.dataset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dataset-item {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dataset-select {
+  flex: 1;
+  border: 1px solid #2b3f64;
+  border-radius: 8px;
+  background: #111d31;
+  color: #e8f1ff;
+  font-size: 0.74rem;
+  text-align: left;
+  padding: 0.35rem 0.48rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dataset-select small {
+  color: #98abd0;
+  font-size: 0.68rem;
+}
+
+.dataset-remove {
+  border: 1px solid #5b3a4a;
+  border-radius: 8px;
+  background: #2a1620;
+  color: #ffadb9;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.45rem;
+  cursor: pointer;
+}

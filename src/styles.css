@@ -1,4 +1,4 @@
-*,
+* ,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -9,6 +9,23 @@
 html,
 body {
   height: 100%;
-  background: #0d1117;
-  color: #e6edf3;
+  background: #070a13;
+  color: #e7eefc;
+  font-family: 'Sora', 'Avenir Next', 'Segoe UI', sans-serif;
+}
+
+body {
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: #2f6fd4;
+  color: #f4f9ff;
 }

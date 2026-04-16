@@ -42,6 +42,10 @@ export const HistoryStore = signalStore(
         return;
       }
 
+      if (!queryStore.hasDataset(entry.datasetId)) {
+        return;
+      }
+
       queryStore.hydrateFrom({
         selectedDatasetId: entry.datasetId,
         filterTree: entry.filterTree,

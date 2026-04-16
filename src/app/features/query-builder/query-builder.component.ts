@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { getDataset } from '../../core/datasets/datasets.registry';
 import { FilterGroup } from '../../core/query-engine/filter-node.model';
 import { QueryStore } from '../../store/query.store';
 import { FilterGroupComponent } from './filter-group.component';
@@ -17,7 +16,7 @@ export class QueryBuilderComponent {
   protected readonly store = inject(QueryStore);
 
   get fields() {
-    return getDataset(this.store.selectedDatasetId()).fields;
+    return this.store.selectedDataset().fields;
   }
 
   protected updateTree(tree: FilterGroup): void {

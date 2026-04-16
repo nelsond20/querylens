@@ -1,0 +1,77 @@
+<section class="data-sources">
+  <div class="section-head">
+    <h2 class="title">Live Data Sources</h2>
+    <p class="caption">Bring your own data via file upload or API endpoint.</p>
+  </div>
+
+  <div class="block">
+    <span class="block-title">Import File</span>
+    <label class="file-input">
+      <input type="file" accept=".json,.csv" (change)="onFileSelected($event)" [disabled]="loadingFile()" />
+      <span>{{ loadingFile() ? 'Importing file...' : 'Choose CSV or JSON file' }}</span>
+    </label>
+  </div>
+
+  <div class="block">
+    <span class="block-title">Fetch from API</span>
+    <input
+      class="input"
+      type="url"
+      placeholder="https://api.example.com/records"
+      [ngModel]="apiUrl()"
+      (ngModelChange)="apiUrl.set($event)"
+    />
+    <input
+      class="input"
+      type="text"
+      placeholder="Dataset name (optional)"
+      [ngModel]="apiName()"
+      (ngModelChange)="apiName.set($event)"
+    />
+    <input
+      class="input"
+      type="password"
+      placeholder="Bearer token (optional)"
+      [ngModel]="apiBearerToken()"
+      (ngModelChange)="apiBearerToken.set($event)"
+    />
+    <textarea
+      class="textarea"
+      rows="3"
+      placeholder='Custom headers JSON (optional), e.g. {"x-api-key":"abc"}'
+      [ngModel]="apiHeadersJson()"
+      (ngModelChange)="apiHeadersJson.set($event)"
+    ></textarea>
+
+    <button class="btn-fetch" (click)="fetchFromApi()" [disabled]="loadingApi()">
+      {{ loadingApi() ? 'Fetching...' : 'Fetch API Dataset' }}
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="message error">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+    <p class="message success">{{ successMessage() }}</p>
+  }
+
+  <div class="block">
+    <span class="block-title">Imported Datasets</span>
+    @if (store.customDatasets().length === 0) {
+      <p class="empty">No custom datasets yet.</p>
+    } @else {
+      <div class="dataset-list">
+        @for (dataset of store.customDatasets(); track dataset.id) {
+          <div class="dataset-item">
+            <button class="dataset-select" (click)="store.setDataset(dataset.id)">
+              <span>{{ dataset.name }}</span>
+              <small>{{ dataset.rows.length }} rows</small>
+            </button>
+            <button class="dataset-remove" (click)="removeCustomDataset(dataset.id)">Remove</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

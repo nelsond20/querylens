@@ -20,9 +20,9 @@
     <input
       class="input"
       [type]="fieldType === 'number' ? 'number' : fieldType === 'date' ? 'date' : 'text'"
-      [value]="$any(condition.value)"
+      [value]="valueAsText"
       (input)="updateValue($any($event.target).value)"
-      placeholder="value"
+      [placeholder]="inputPlaceholder"
     />
   }
 

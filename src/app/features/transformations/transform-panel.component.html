@@ -1,6 +1,6 @@
 <div class="panel">
   <button class="toggle" (click)="toggle()">
-    <span>Transform</span>
+    <span>Transformation Studio</span>
     <span class="chevron">{{ expanded() ? '▲' : '▼' }}</span>
   </button>
 
@@ -96,7 +96,12 @@
         }
       }
 
-      <button class="btn-apply" (click)="apply()" [disabled]="store.results().length === 0">Apply</button>
+      <div class="actions">
+        <button class="btn-apply" (click)="apply()" [disabled]="store.results().length === 0">Apply</button>
+        <button class="btn-reset" (click)="clearTransformation()" [disabled]="!store.transformation()">
+          Clear
+        </button>
+      </div>
     </div>
   }
 </div>

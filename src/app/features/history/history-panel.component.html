@@ -1,17 +1,21 @@
 <div class="history">
+  <div class="meta-row">
+    <span class="meta-label">{{ historyStore.entries().length }} saved snapshots</span>
+  </div>
+
   <div class="save-row">
     <input
       class="input"
       type="text"
-      placeholder="Name to save..."
+      placeholder="Snapshot name..."
       [value]="saveName()"
       (input)="onNameInput($event)"
     />
-    <button class="btn-save" (click)="save()" [disabled]="!saveName().trim()">Save</button>
+    <button class="btn-save" (click)="save()" [disabled]="!saveName().trim()">Save Snapshot</button>
   </div>
 
   @if (historyStore.entries().length === 0) {
-    <div class="empty">No saved queries</div>
+    <div class="empty">No saved snapshots yet.</div>
   } @else {
     <div class="entries">
       @for (entry of historyStore.entries(); track entry.id) {
