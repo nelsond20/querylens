@@ -88,7 +88,27 @@ export const QueryStore = signalStore(
         patchState(store, {
           selectedDatasetId: BUILT_IN_DATASETS[0].id,
           filterTree: { type: 'group', op: 'AND', children: [] },
-          rawQuery: '{\n  \"type\": \"group\",\n  \"op\": \"AND\",\n  \"children\": []\n}',
+          rawQuery: '{\n  "type": "group",\n  "op": "AND",\n  "children": []\n}',
+          rawQueryError: null,
+          results: [],
+          transformation: null,
+          transformedResults: [],
+          scannedRows: 0,
+          lastExecutionMs: null,
+          lastExecutedAt: null,
+        });
+      }
+    },
+
+    clearCustomDatasets(): void {
+      patchState(store, { customDatasets: [] });
+      localStorage.removeItem(CUSTOM_DATASETS_STORAGE_KEY);
+
+      if (store.selectedDataset().source !== 'built-in') {
+        patchState(store, {
+          selectedDatasetId: BUILT_IN_DATASETS[0].id,
+          filterTree: { type: 'group', op: 'AND', children: [] },
+          rawQuery: '{\n  "type": "group",\n  "op": "AND",\n  "children": []\n}',
           rawQueryError: null,
           results: [],
           transformation: null,

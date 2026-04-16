@@ -27,3 +27,8 @@
   outline: none;
   border-color: #4b8de9;
 }
+
+.hint {
+  font-size: 0.72rem;
+  color: #8fa4cc;
+}
