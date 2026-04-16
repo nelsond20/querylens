@@ -1,0 +1,72 @@
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+
+.settings-page {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.setting-card {
+  border: 1px solid #2b3f61;
+  border-radius: 12px;
+  background: #0f1a2c99;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.setting-card h2 {
+  font-size: 0.95rem;
+}
+
+.setting-card p {
+  color: #9bb0d7;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.setting-card code {
+  color: #d5e5ff;
+}
+
+.mode-row {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.mode-button {
+  border: 1px solid #2e456f;
+  border-radius: 999px;
+  background: #12213a;
+  color: #c8daf8;
+  font-size: 0.76rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+}
+
+.mode-button.active {
+  border-color: #4b8de9;
+  background: #17335b;
+  color: #f2f7ff;
+}
+
+.danger {
+  border-color: #5b3a4a;
+  background: #22111a;
+}
+
+.danger-button {
+  width: fit-content;
+  border: 1px solid #944d62;
+  border-radius: 8px;
+  background: #3a1724;
+  color: #ffd7df;
+  font-size: 0.76rem;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}

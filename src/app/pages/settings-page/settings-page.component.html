@@ -1,0 +1,42 @@
+<section class="settings-page">
+  <article class="setting-card">
+    <h2>Experience Mode</h2>
+    <p>Demo mode focuses on built-in scenarios. Live mode focuses on your imported datasets.</p>
+    <p>URL override: <code>?mode=demo</code> or <code>?mode=live</code>.</p>
+
+    <div class="mode-row">
+      <button
+        class="mode-button"
+        [class.active]="appMode.mode() === 'demo'"
+        (click)="setMode('demo')"
+      >
+        Demo Mode
+      </button>
+      <button
+        class="mode-button"
+        [class.active]="appMode.mode() === 'live'"
+        (click)="setMode('live')"
+      >
+        Live Mode
+      </button>
+    </div>
+  </article>
+
+  <article class="setting-card">
+    <h2>Data Privacy</h2>
+    <p>
+      QueryLens does not send your records to QueryLens servers. Files, imported API payloads, and query history are
+      stored only in this browser profile.
+    </p>
+    <p>
+      Consent status:
+      <strong>{{ privacyConsent.consentAccepted() ? 'Accepted' : 'Pending' }}</strong>
+    </p>
+  </article>
+
+  <article class="setting-card danger">
+    <h2>Local Data Reset</h2>
+    <p>Clear custom datasets, saved history, and current query state from local storage.</p>
+    <button class="danger-button" (click)="clearLocalWorkspace()">Clear Local Workspace</button>
+  </article>
+</section>

@@ -14,11 +14,28 @@
   gap: 0.2rem;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
 .title {
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #cdddf7;
+}
+
+.collapse-toggle {
+  border: 1px solid #2e456f;
+  border-radius: 999px;
+  background: #12213a;
+  color: #c8daf8;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
 }
 
 .caption {

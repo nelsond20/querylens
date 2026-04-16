@@ -1,0 +1,282 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.workspace-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-left,
+.panel-right {
+  animation: panel-enter 440ms ease both;
+}
+
+.panel-left {
+  width: 390px;
+  min-width: 300px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  padding: 1rem;
+  border-right: 1px solid #24324f;
+  background: #0d1220cc;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #95a7c9;
+}
+
+.intro-panel,
+.preset-panel {
+  border: 1px solid #1b2740;
+  border-radius: 12px;
+  background: #101b2e99;
+  padding: 0.75rem;
+}
+
+.dataset-name {
+  margin-top: 0.32rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.dataset-description {
+  margin-top: 0.22rem;
+  color: #95a7c9;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.section-caption {
+  font-size: 0.73rem;
+  color: #95a7c9;
+}
+
+.preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+
+.preset-item {
+  border: 1px solid #1b2740;
+  border-radius: 10px;
+  background: #0f1728;
+  text-align: left;
+  padding: 0.55rem 0.62rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: border-color 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.preset-item:hover {
+  border-color: #2f74d4;
+  background: #111f37;
+  transform: translateY(-1px);
+}
+
+.preset-item.active {
+  border-color: #3a86e8;
+  background: linear-gradient(135deg, #12274d, #10233e);
+}
+
+.preset-title {
+  color: #e7eefc;
+  font-size: 0.82rem;
+  font-weight: 620;
+}
+
+.preset-description {
+  color: #95a7c9;
+  font-size: 0.73rem;
+  line-height: 1.35;
+}
+
+.query-actions {
+  display: flex;
+  gap: 0.55rem;
+  padding-top: 0.3rem;
+}
+
+.btn-run {
+  flex: 1;
+  background: linear-gradient(135deg, #2d7ddf, #3e9bff);
+  border: none;
+  border-radius: 10px;
+  color: #f8fbff;
+  font-size: 0.84rem;
+  font-weight: 620;
+  padding: 0.55rem;
+  cursor: pointer;
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.btn-run:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.btn-run:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  background: transparent;
+  border: 1px solid #24324f;
+  border-radius: 10px;
+  color: #95a7c9;
+  font-size: 0.82rem;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  border-color: #3e9bff;
+  color: #e7eefc;
+}
+
+.panel-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.kpi-item {
+  border: 1px solid #1b2740;
+  border-radius: 10px;
+  background: #0f1b3099;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.kpi-label {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #95a7c9;
+}
+
+.kpi-value {
+  font-size: 0.9rem;
+  font-weight: 620;
+  color: #e7eefc;
+}
+
+.kpi-value-soft {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #b9c9e8;
+}
+
+.results-section {
+  flex: 1;
+  min-height: 0;
+}
+
+.tabs-secondary {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.tab {
+  background: transparent;
+  border: 1px solid #1b2740;
+  border-radius: 999px;
+  color: #95a7c9;
+  font-size: 0.76rem;
+  padding: 0.3rem 0.72rem;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #e7eefc;
+  border-color: #24324f;
+}
+
+.tab.active {
+  color: #f2f8ff;
+  border-color: #2e74d6;
+  background: #132b4d;
+}
+
+.tab-content {
+  height: 230px;
+  overflow: hidden;
+  border: 1px solid #1b2740;
+  border-radius: 10px;
+  background: #0f1728a8;
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1240px) {
+  .kpi-strip {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .workspace-body {
+    flex-direction: column;
+  }
+
+  .panel-left {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid #24324f;
+    max-height: 55vh;
+  }
+
+  .panel-right {
+    min-height: 0;
+  }
+
+  .kpi-strip {
+    grid-template-columns: 1fr;
+  }
+}
