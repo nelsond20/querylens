@@ -95,6 +95,8 @@ export class WorkspacePageComponent implements OnInit {
   protected readonly store = inject(QueryStore);
   protected readonly presets = QUERY_PRESETS;
   protected readonly activePresetId = signal<string>('');
+  protected readonly historyExpanded = signal(true);
+  protected readonly diffExpanded = signal(false);
   protected readonly selectedDataset = this.store.selectedDataset;
   protected readonly mode = this.appModeService.mode;
   protected readonly isDemoMode = this.appModeService.isDemo;
@@ -182,5 +184,13 @@ export class WorkspacePageComponent implements OnInit {
     if (preset.transformation) {
       this.store.applyTransformation(preset.transformation);
     }
+  }
+
+  protected toggleHistory(): void {
+    this.historyExpanded.update((value) => !value);
+  }
+
+  protected toggleDiff(): void {
+    this.diffExpanded.update((value) => !value);
   }
 }

@@ -9,11 +9,21 @@
   min-height: 0;
   height: 100%;
   overflow: hidden;
+  transition: background 280ms ease;
+}
+
+.workspace-body.demo-mode {
+  background: linear-gradient(180deg, #0b1323 0%, #09101d 100%);
+}
+
+.workspace-body.live-mode {
+  background: linear-gradient(180deg, #0a141f 0%, #09111b 100%);
 }
 
 .panel-left,
 .panel-right {
   animation: panel-enter 440ms ease both;
+  transition: border-color 280ms ease, background-color 280ms ease;
 }
 
 .panel-left {
@@ -27,6 +37,14 @@
   border-right: 1px solid #24324f;
   background: #0d1220cc;
   overflow-y: auto;
+}
+
+.workspace-body.demo-mode .panel-left {
+  border-right-color: #294a79;
+}
+
+.workspace-body.live-mode .panel-left {
+  border-right-color: #2a5960;
 }
 
 .section-title {
@@ -109,6 +127,10 @@
   color: #95a7c9;
   font-size: 0.73rem;
   line-height: 1.35;
+}
+
+.mode-switch-card {
+  animation: mode-section-enter 260ms ease both;
 }
 
 .query-actions {
@@ -206,45 +228,65 @@
   min-height: 0;
 }
 
-.tabs-secondary {
-  display: flex;
-  gap: 0.25rem;
+.fold-panel {
+  border: 1px solid #1b2740;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #101a2da8;
   flex-shrink: 0;
 }
 
-.tab {
-  background: transparent;
-  border: 1px solid #1b2740;
-  border-radius: 999px;
-  color: #95a7c9;
-  font-size: 0.76rem;
-  padding: 0.3rem 0.72rem;
+.fold-toggle {
+  width: 100%;
+  border: none;
+  background: #101d32;
+  color: #e6edf3;
+  font-size: 0.79rem;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
 }
 
-.tab:hover {
-  color: #e7eefc;
-  border-color: #24324f;
+.fold-toggle:hover {
+  background: #142743;
 }
 
-.tab.active {
-  color: #f2f8ff;
-  border-color: #2e74d6;
-  background: #132b4d;
+.chevron {
+  font-size: 0.66rem;
+  color: #9eb3d8;
 }
 
-.tab-content {
+.fold-body {
   height: 230px;
+  border-top: 1px solid #1f2f4c;
   overflow: hidden;
-  border: 1px solid #1b2740;
-  border-radius: 10px;
   background: #0f1728a8;
+}
+
+.fold-body app-history-panel,
+.fold-body app-diff-panel {
+  display: block;
+  height: 100%;
 }
 
 @keyframes panel-enter {
   from {
     opacity: 0;
     transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mode-section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
