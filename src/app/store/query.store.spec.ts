@@ -5,6 +5,7 @@ describe('QueryStore', () => {
   let store: InstanceType<typeof QueryStore>;
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({});
     store = TestBed.inject(QueryStore);
   });
@@ -28,6 +29,8 @@ describe('QueryStore', () => {
 
     expect(store.results().length).toBeGreaterThan(0);
     expect(store.resultCount()).toBe(store.results().length);
+    expect(store.scannedRows()).toBeGreaterThan(0);
+    expect(store.lastExecutionMs()).not.toBeNull();
   });
 
   it('updateFilterTree syncs rawQuery', () => {
@@ -41,7 +44,7 @@ describe('QueryStore', () => {
   it('updateRawQuery with invalid JSON sets rawQueryError without replacing filterTree', () => {
     store.updateRawQuery('{ invalid json }');
 
-    expect(store.rawQueryError()).toBe('JSON inválido');
+    expect(store.rawQueryError()).toBe('Invalid JSON syntax');
     expect(store.filterTree().type).toBe('group');
   });
 
@@ -60,5 +63,22 @@ describe('QueryStore', () => {
 
     expect(store.results().length).toBe(0);
     expect(store.selectedDatasetId()).toBe('products');
+  });
+
+  it('adds and removes custom datasets', () => {
+    store.addCustomDataset({
+      id: 'custom-1',
+      name: 'Custom Data',
+      description: 'desc',
+      fields: [{ key: 'id', label: 'ID', type: 'string' }],
+      rows: [{ id: '1' }],
+      source: 'file',
+    });
+
+    expect(store.hasDataset('custom-1')).toBeTrue();
+    expect(store.availableDatasets().some((dataset) => dataset.id === 'custom-1')).toBeTrue();
+
+    store.removeCustomDataset('custom-1');
+    expect(store.hasDataset('custom-1')).toBeFalse();
   });
 });

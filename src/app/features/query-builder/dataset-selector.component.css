@@ -13,9 +13,9 @@
 }
 
 .select {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
+  background: #121f35;
+  border: 1px solid #2b3d60;
+  border-radius: 8px;
   color: #e6edf3;
   padding: 0.4rem 0.6rem;
   font-size: 0.875rem;
@@ -25,5 +25,5 @@
 
 .select:focus {
   outline: none;
-  border-color: #58a6ff;
+  border-color: #4b8de9;
 }

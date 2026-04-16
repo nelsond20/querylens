@@ -21,6 +21,8 @@ const OPERATORS_BY_TYPE: Record<FieldDefinition['type'], { value: Operator; labe
     { value: 'gte', label: '>=' },
     { value: 'lt', label: '<' },
     { value: 'lte', label: '<=' },
+    { value: 'in', label: 'in list' },
+    { value: 'notIn', label: 'not in list' },
   ],
   boolean: [{ value: 'eq', label: '=' }],
   date: [
@@ -67,6 +69,18 @@ export class FilterConditionComponent {
 
   updateValue(value: string): void {
     const fieldDef = this.fields.find((f) => f.key === this.condition.field);
+    const operator = this.condition.operator;
+
+    if (operator === 'in' || operator === 'notIn') {
+      const parsedList = value
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+      const normalized =
+        fieldDef?.type === 'number' ? parsedList.map((item) => Number(item)) : parsedList;
+      this.conditionChange.emit({ ...this.condition, value: normalized });
+      return;
+    }
 
     if (fieldDef?.type === 'number') {
       this.conditionChange.emit({ ...this.condition, value: Number(value) });
@@ -79,5 +93,19 @@ export class FilterConditionComponent {
     }
 
     this.conditionChange.emit({ ...this.condition, value });
+  }
+
+  get valueAsText(): string {
+    if (Array.isArray(this.condition.value)) {
+      return this.condition.value.join(', ');
+    }
+    return String(this.condition.value ?? '');
+  }
+
+  get inputPlaceholder(): string {
+    if (this.condition.operator === 'in' || this.condition.operator === 'notIn') {
+      return 'value1, value2, value3';
+    }
+    return 'value';
   }
 }

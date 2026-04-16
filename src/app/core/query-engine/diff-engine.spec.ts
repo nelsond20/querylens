@@ -40,4 +40,15 @@ describe('diff', () => {
     expect(result.removed).toHaveLength(0);
     expect(result.unchanged).toHaveLength(0);
   });
+
+  it('is order agnostic for identical rows', () => {
+    const a = [{ id: '1' }, { id: '2' }];
+    const b = [{ id: '2' }, { id: '1' }];
+
+    const result = diff(a, b);
+
+    expect(result.unchanged).toHaveLength(2);
+    expect(result.added).toHaveLength(0);
+    expect(result.removed).toHaveLength(0);
+  });
 });

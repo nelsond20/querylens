@@ -3,6 +3,17 @@
   flex-direction: column;
   gap: 0.5rem;
   height: 100%;
+  padding: 0.65rem;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.meta-label {
+  font-size: 0.72rem;
+  color: #96abd2;
 }
 
 .save-row {
@@ -13,32 +24,32 @@
 
 .input {
   flex: 1;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 4px;
+  background: #121f35;
+  border: 1px solid #2b3f61;
+  border-radius: 8px;
   color: #e6edf3;
   font-size: 0.8rem;
-  padding: 0.35rem 0.5rem;
+  padding: 0.38rem 0.56rem;
 }
 
 .input:focus {
   outline: none;
-  border-color: #58a6ff;
+  border-color: #4c8ce6;
 }
 
 .btn-save {
-  background: #1f6feb;
+  background: linear-gradient(135deg, #2a78d6, #3e9bff);
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 0.35rem 0.75rem;
+  padding: 0.35rem 0.72rem;
   cursor: pointer;
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #388bfd;
+  filter: brightness(1.08);
 }
 
 .btn-save:disabled {
@@ -47,7 +58,7 @@
 }
 
 .empty {
-  color: #8b949e;
+  color: #9ab0d5;
   font-size: 0.8rem;
   text-align: center;
   padding: 1rem 0;
@@ -65,10 +76,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
+  background: #121f35;
+  border: 1px solid #2b3f61;
+  border-radius: 8px;
+  padding: 0.48rem 0.64rem;
   gap: 0.5rem;
 }
 
@@ -80,7 +91,7 @@
 }
 
 .entry-name {
-  font-size: 0.8rem;
+  font-size: 0.79rem;
   color: #e6edf3;
   white-space: nowrap;
   overflow: hidden;
@@ -89,7 +100,7 @@
 
 .entry-meta {
   font-size: 0.7rem;
-  color: #8b949e;
+  color: #8ea5ce;
 }
 
 .entry-actions {
@@ -99,26 +110,26 @@
 }
 
 .btn-load {
-  background: none;
-  border: 1px solid #30363d;
-  border-radius: 4px;
-  color: #8b949e;
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
+  background: transparent;
+  border: 1px solid #30456d;
+  border-radius: 7px;
+  color: #9db3d9;
+  font-size: 0.73rem;
+  padding: 0.22rem 0.5rem;
   cursor: pointer;
 }
 
 .btn-load:hover {
-  border-color: #58a6ff;
-  color: #58a6ff;
+  border-color: #4b8de9;
+  color: #e1edff;
 }
 
 .btn-delete {
   background: none;
   border: none;
-  color: #f85149;
+  color: #ff9d9d;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1;
   padding: 0 0.2rem;
 }

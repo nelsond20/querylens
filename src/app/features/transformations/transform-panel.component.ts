@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { getDataset } from '../../core/datasets/datasets.registry';
 import { AggregateOp, Transformation } from '../../core/query-engine/transformation.model';
 import { QueryStore } from '../../store/query.store';
 
@@ -15,7 +14,7 @@ import { QueryStore } from '../../store/query.store';
 })
 export class TransformPanelComponent {
   protected readonly store = inject(QueryStore);
-  protected readonly expanded = signal(false);
+  protected readonly expanded = signal(true);
 
   protected readonly type = signal<'map' | 'groupBy' | 'sort'>('sort');
   protected readonly sortField = signal('');
@@ -26,7 +25,7 @@ export class TransformPanelComponent {
   protected readonly groupValueField = signal('');
 
   get fields() {
-    return getDataset(this.store.selectedDatasetId()).fields;
+    return this.store.selectedDataset().fields;
   }
 
   protected toggle(): void {
@@ -61,6 +60,10 @@ export class TransformPanelComponent {
     }
 
     this.store.applyTransformation(transformation);
+  }
+
+  protected clearTransformation(): void {
+    this.store.clearTransformation();
   }
 
   protected toggleMapField(key: string): void {

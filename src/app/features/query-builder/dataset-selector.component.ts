@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DATASETS } from '../../core/datasets/datasets.registry';
 import { QueryStore } from '../../store/query.store';
 
 @Component({
@@ -13,7 +12,7 @@ import { QueryStore } from '../../store/query.store';
 })
 export class DatasetSelectorComponent {
   protected readonly store = inject(QueryStore);
-  protected readonly datasets = DATASETS;
+  protected readonly datasets = this.store.availableDatasets;
 
   protected select(id: string): void {
     this.store.setDataset(id);

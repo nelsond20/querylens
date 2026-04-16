@@ -1,5 +1,5 @@
 <div class="editor">
-  <span class="label">JSON</span>
+  <span class="label">JSON Editor</span>
   <textarea
     class="textarea"
     [class.has-error]="store.rawQueryError()"
@@ -12,5 +12,7 @@
 
   @if (store.rawQueryError()) {
     <span class="error">{{ store.rawQueryError() }}</span>
+  } @else {
+    <span class="hint">Edit the filter tree directly for advanced scenarios.</span>
   }
 </div>

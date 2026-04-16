@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  border: 1px solid #26395a;
+  border-radius: 12px;
+  padding: 0.6rem;
+  background: #0f1a2c99;
 }
 
 .label {
@@ -9,32 +13,37 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #8b949e;
+  color: #93a8cd;
 }
 
 .textarea {
   width: 100%;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
+  background: #111d31;
+  border: 1px solid #2b3f64;
+  border-radius: 8px;
   color: #e6edf3;
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.76rem;
   line-height: 1.5;
-  padding: 0.5rem;
+  padding: 0.55rem;
   resize: vertical;
 }
 
 .textarea:focus {
   outline: none;
-  border-color: #58a6ff;
+  border-color: #4b8de9;
 }
 
 .textarea.has-error {
-  border-color: #f85149;
+  border-color: #f06868;
 }
 
 .error {
   font-size: 0.75rem;
-  color: #f85149;
+  color: #ff8e8e;
+}
+
+.hint {
+  font-size: 0.73rem;
+  color: #8ea2ca;
 }

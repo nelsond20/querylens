@@ -1,5 +1,6 @@
 import { FilterGroup } from '../core/query-engine/filter-node.model';
 import { Transformation } from '../core/query-engine/transformation.model';
+import { Dataset } from '../core/datasets/dataset.model';
 
 export interface QueryState {
   selectedDatasetId: string;
@@ -11,6 +12,10 @@ export interface QueryState {
   transformedResults: Record<string, unknown>[];
   activeTab: 'diff' | 'history';
   isExecuting: boolean;
+  scannedRows: number;
+  lastExecutionMs: number | null;
+  lastExecutedAt: string | null;
+  customDatasets: Dataset[];
 }
 
 export const initialQueryState: QueryState = {
@@ -23,4 +28,8 @@ export const initialQueryState: QueryState = {
   transformedResults: [],
   activeTab: 'history',
   isExecuting: false,
+  scannedRows: 0,
+  lastExecutionMs: null,
+  lastExecutedAt: null,
+  customDatasets: [],
 };

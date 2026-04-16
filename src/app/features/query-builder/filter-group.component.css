@@ -1,16 +1,16 @@
 .group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 0.5rem;
-  background: #0d1117;
+  gap: 0.45rem;
+  border: 1px solid #2b3d61;
+  border-radius: 10px;
+  padding: 0.55rem;
+  background: #0f1728;
 }
 
 .group.nested {
-  border-color: #1f6feb;
-  background: #0d1117cc;
+  border-color: #3068b3;
+  background: #101d3399;
   margin-left: 0.75rem;
 }
 
@@ -21,40 +21,41 @@
 }
 
 .btn-op {
-  background: #1f6feb22;
-  border: 1px solid #1f6feb;
-  border-radius: 4px;
-  color: #58a6ff;
-  font-size: 0.75rem;
+  background: #17407a66;
+  border: 1px solid #2b68be;
+  border-radius: 999px;
+  color: #b8d4ff;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: 0.15rem 0.5rem;
+  padding: 0.14rem 0.52rem;
   cursor: pointer;
   letter-spacing: 0.05em;
 }
 
 .btn-op:hover {
-  background: #1f6feb44;
+  background: #1f4e9266;
 }
 
 .group-label {
-  font-size: 0.7rem;
-  color: #8b949e;
+  font-size: 0.66rem;
+  color: #92a9d0;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .btn-remove-group {
   margin-left: auto;
   background: none;
   border: none;
-  color: #f85149;
+  color: #ff8f8f;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .group-children {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.38rem;
 }
 
 .group-actions {
@@ -63,16 +64,16 @@
 }
 
 .btn-add {
-  background: none;
-  border: 1px solid #30363d;
-  border-radius: 4px;
-  color: #8b949e;
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
+  background: transparent;
+  border: 1px solid #2a3d5f;
+  border-radius: 999px;
+  color: #9eb4da;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
   cursor: pointer;
 }
 
 .btn-add:hover {
-  border-color: #58a6ff;
-  color: #58a6ff;
+  border-color: #4b8de9;
+  color: #d9e8ff;
 }

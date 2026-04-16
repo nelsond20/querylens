@@ -1,24 +1,80 @@
 <div class="app-shell">
   <header class="app-header">
-    <span class="app-title">QueryLens</span>
-    <button class="btn-share" (click)="shareUrl()" title="Copy shareable URL">Share</button>
+    <div class="brand">
+      <span class="eyebrow">Analytics Workbench</span>
+      <h1 class="app-title">QueryLens</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn-share" (click)="shareUrl()" title="Copy shareable URL">Share Workspace</button>
+    </div>
   </header>
 
   <main class="app-body">
     <aside class="panel-left">
+      <section class="intro-panel">
+        <h2 class="section-title">Current Dataset</h2>
+        <p class="dataset-name">{{ activeDatasetName() }}</p>
+        <p class="dataset-description">{{ activeDatasetDescription() }}</p>
+      </section>
+
+      <section class="preset-panel">
+        <div class="section-head">
+          <h2 class="section-title">Quick Scenario Lab</h2>
+          <span class="section-caption">One click to run realistic analysis flows</span>
+        </div>
+        <div class="preset-list">
+          @for (preset of presets; track preset.id) {
+            <button
+              class="preset-item"
+              [class.active]="activePresetId() === preset.id"
+              (click)="runPreset(preset)"
+            >
+              <span class="preset-title">{{ preset.title }}</span>
+              <span class="preset-description">{{ preset.description }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <app-data-sources-panel />
       <app-dataset-selector />
       <app-query-builder />
       <app-query-editor />
 
       <div class="query-actions">
         <button class="btn-run" (click)="store.executeQuery()" [disabled]="store.isExecuting()">
-          {{ store.isExecuting() ? 'Running...' : 'Run Query' }}
+          {{ store.isExecuting() ? 'Running query...' : 'Run Query' }}
         </button>
-        <button class="btn-clear" (click)="store.clearQuery()">Clear</button>
+        <button class="btn-clear" (click)="store.clearQuery()">Reset</button>
       </div>
     </aside>
 
     <section class="panel-right">
+      <div class="kpi-strip">
+        <div class="kpi-item">
+          <span class="kpi-label">Rows Scanned</span>
+          <span class="kpi-value">{{ store.scannedRows() }}</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-label">Rows Returned</span>
+          <span class="kpi-value">{{ store.resultCount() }}</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-label">Match Rate</span>
+          <span class="kpi-value">{{ store.matchRate() }}%</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-label">Execution Time</span>
+          <span class="kpi-value">
+            {{ store.lastExecutionMs() !== null ? store.lastExecutionMs() + ' ms' : 'Not run yet' }}
+          </span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-label">Transformation</span>
+          <span class="kpi-value kpi-value-soft">{{ transformationLabel() }}</span>
+        </div>
+      </div>
+
       <app-results-table class="results-section" />
       <app-transform-panel />
 
@@ -28,14 +84,14 @@
           [class.active]="store.activeTab() === 'history'"
           (click)="store.hydrateFrom({ activeTab: 'history' })"
         >
-          History
+          Query History
         </button>
         <button
           class="tab"
           [class.active]="store.activeTab() === 'diff'"
           (click)="store.hydrateFrom({ activeTab: 'diff' })"
         >
-          Diff
+          Diff Analysis
         </button>
       </div>
 
