@@ -1,6 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { QueryStore } from '../../store/query.store';
 
 @Component({
@@ -11,11 +22,15 @@ import { QueryStore } from '../../store/query.store';
   styleUrl: './results-table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResultsTableComponent {
+export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   protected readonly store = inject(QueryStore);
   protected readonly searchTerm = signal('');
   protected readonly sortField = signal('');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
+  private resizeObserver: ResizeObserver | null = null;
+
+  @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
+  @ViewChild('tableWrapper') private tableWrapper?: ElementRef<HTMLElement>;
 
   protected readonly rows = computed(() => {
     const baseRows = this.store.displayedResults();
@@ -45,6 +60,13 @@ export class ResultsTableComponent {
 
       const compare = String(aValue).localeCompare(String(bValue));
       return direction === 'asc' ? compare : -compare;
+    });
+  });
+
+  private readonly viewportResizeEffect = effect(() => {
+    this.rows();
+    queueMicrotask(() => {
+      this.viewport?.checkViewportSize();
     });
   });
 
@@ -104,6 +126,24 @@ export class ResultsTableComponent {
 
   protected trackByIndex(index: number): number {
     return index;
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof ResizeObserver !== 'undefined' && this.tableWrapper) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.viewport?.checkViewportSize();
+      });
+      this.resizeObserver.observe(this.tableWrapper.nativeElement);
+    }
+
+    queueMicrotask(() => {
+      this.viewport?.checkViewportSize();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   }
 
   private download(filename: string, content: string, type: string): void {

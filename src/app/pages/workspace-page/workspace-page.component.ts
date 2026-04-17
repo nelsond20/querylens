@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { AppModeService } from '../../core/app-mode.service';
@@ -91,6 +91,7 @@ const QUERY_PRESETS: QueryPreset[] = [
 export class WorkspacePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly appModeService = inject(AppModeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly store = inject(QueryStore);
   protected readonly presets = QUERY_PRESETS;
@@ -141,7 +142,7 @@ export class WorkspacePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const queryParam = params.get('q');
       if (!queryParam || this.hydratedQueryToken() === queryParam) {
         return;
