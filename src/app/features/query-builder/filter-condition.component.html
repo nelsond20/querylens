@@ -1,21 +1,25 @@
 <div class="condition">
-  <select class="select" [value]="condition.field" (change)="updateField($any($event.target).value)">
-    @for (field of fields; track field.key) {
-      <option [value]="field.key">{{ field.label }}</option>
-    }
-  </select>
+  <ql-select
+    [compact]="true"
+    [options]="fieldOptions"
+    [value]="condition.field"
+    (valueChange)="updateField($any($event))"
+  />
 
-  <select class="select" [value]="condition.operator" (change)="updateOperator($any($event.target).value)">
-    @for (operator of operators; track operator.value) {
-      <option [value]="operator.value">{{ operator.label }}</option>
-    }
-  </select>
+  <ql-select
+    [compact]="true"
+    [options]="operatorOptions"
+    [value]="condition.operator"
+    (valueChange)="updateOperator($any($event))"
+  />
 
   @if (fieldType === 'boolean') {
-    <select class="select" [value]="$any(condition.value)" (change)="updateValue($any($event.target).value)">
-      <option value="true">true</option>
-      <option value="false">false</option>
-    </select>
+    <ql-select
+      [compact]="true"
+      [options]="booleanOptions"
+      [value]="valueAsText"
+      (valueChange)="updateValue($any($event))"
+    />
   } @else {
     <input
       class="input"
@@ -26,5 +30,5 @@
     />
   }
 
-  <button class="btn-remove" (click)="remove.emit()" title="Remove condition">x</button>
+  <button class="btn-remove" (click)="remove.emit()" title="Remove condition" aria-label="Remove condition">×</button>
 </div>

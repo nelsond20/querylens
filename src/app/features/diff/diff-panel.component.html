@@ -1,16 +1,12 @@
 <div class="diff-panel">
   <div class="controls">
     <span class="label">Compare against a saved snapshot</span>
-    <select
-      class="select"
+    <ql-select
+      [options]="historyOptions"
       [value]="selectedHistoryId()"
-      (change)="selectedHistoryId.set($any($event.target).value)"
-    >
-      <option value="">Select a saved query</option>
-      @for (entry of historyStore.entries(); track entry.id) {
-        <option [value]="entry.id">{{ entry.name }} ({{ entry.datasetId }})</option>
-      }
-    </select>
+      placeholder="Select a saved query"
+      (valueChange)="selectedHistoryId.set($any($event))"
+    />
   </div>
 
   @if (diffResult(); as result) {

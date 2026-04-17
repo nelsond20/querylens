@@ -5,11 +5,12 @@ import { execute } from '../../core/query-engine/query-engine';
 import { applyTransformation } from '../../core/query-engine/transform-engine';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
+import { QlSelectComponent, SelectOption } from '../../shared/ui/ql-select/ql-select.component';
 
 @Component({
   selector: 'app-diff-panel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, QlSelectComponent],
   templateUrl: './diff-panel.component.html',
   styleUrl: './diff-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +19,13 @@ export class DiffPanelComponent {
   protected readonly queryStore = inject(QueryStore);
   protected readonly historyStore = inject(HistoryStore);
   protected readonly selectedHistoryId = signal('');
+
+  get historyOptions(): SelectOption[] {
+    return this.historyStore.entries().map((e) => ({
+      value: e.id,
+      label: `${e.name} (${e.datasetId})`,
+    }));
+  }
 
   protected readonly historicalRows = computed(() => {
     const id = this.selectedHistoryId();

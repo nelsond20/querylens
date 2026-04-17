@@ -6,67 +6,93 @@
 
 .settings-page {
   display: grid;
-  gap: 0.8rem;
-  padding: 1rem;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  max-width: 640px;
 }
 
 .setting-card {
-  border: 1px solid #2b3f61;
-  border-radius: 12px;
-  background: #0f1a2c99;
-  padding: 0.9rem;
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: var(--space-3);
 }
 
 .setting-card h2 {
-  font-size: 0.95rem;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semi);
+  color: var(--text);
 }
 
 .setting-card p {
-  color: #9bb0d7;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  max-width: 60ch;
 }
 
 .setting-card code {
-  color: #d5e5ff;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 8%, var(--bg));
+  padding: 1px var(--space-1);
+  border-radius: var(--r-sm);
 }
 
 .mode-row {
   display: flex;
-  gap: 0.45rem;
+  gap: var(--space-2);
 }
 
 .mode-button {
-  border: 1px solid #2e456f;
-  border-radius: 999px;
-  background: #12213a;
-  color: #c8daf8;
-  font-size: 0.76rem;
-  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  padding: var(--space-1) var(--space-4);
   cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-expo),
+              background-color var(--dur-fast) var(--ease-expo),
+              color var(--dur-fast) var(--ease-expo);
+}
+
+.mode-button:hover {
+  border-color: var(--border);
+  color: var(--text);
 }
 
 .mode-button.active {
-  border-color: #4b8de9;
-  background: #17335b;
-  color: #f2f7ff;
+  border-color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 12%, var(--surface));
+  color: var(--text);
 }
 
 .danger {
-  border-color: #5b3a4a;
-  background: #22111a;
+  border-color: color-mix(in oklch, var(--error) 25%, var(--border-sub));
+  background: color-mix(in oklch, var(--error) 4%, var(--surface));
 }
 
 .danger-button {
   width: fit-content;
-  border: 1px solid #944d62;
-  border-radius: 8px;
-  background: #3a1724;
-  color: #ffd7df;
-  font-size: 0.76rem;
-  padding: 0.35rem 0.7rem;
+  border: 1px solid color-mix(in oklch, var(--error) 45%, var(--border));
+  border-radius: var(--r-md);
+  background: color-mix(in oklch, var(--error) 10%, var(--surface));
+  color: var(--error);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  padding: var(--space-2) var(--space-4);
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-expo),
+              border-color var(--dur-fast) var(--ease-expo);
+}
+
+.danger-button:hover {
+  background: color-mix(in oklch, var(--error) 18%, var(--surface));
+  border-color: var(--error);
 }

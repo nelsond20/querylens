@@ -1,17 +1,8 @@
 <main class="workspace-body" [class.demo-mode]="isDemoMode()" [class.live-mode]="!isDemoMode()">
   <aside class="panel-left">
-    <section class="intro-panel">
-      <h2 class="section-title">Current Dataset</h2>
-      <p class="dataset-name">{{ activeDatasetName() }}</p>
-      <p class="dataset-description">{{ activeDatasetDescription() }}</p>
-    </section>
-
     @if (isDemoMode()) {
-      <section class="preset-panel mode-switch-card">
-        <div class="section-head">
-          <h2 class="section-title">Quick Scenario Lab</h2>
-          <span class="section-caption">One click to run realistic analysis flows</span>
-        </div>
+      <section class="preset-panel">
+        <span class="section-title">Scenarios</span>
         <div class="preset-list">
           @for (preset of presets; track preset.id) {
             <button
@@ -19,8 +10,7 @@
               [class.active]="activePresetId() === preset.id"
               (click)="runPreset(preset)"
             >
-              <span class="preset-title">{{ preset.title }}</span>
-              <span class="preset-description">{{ preset.description }}</span>
+              {{ preset.title }}
             </button>
           }
         </div>
@@ -28,9 +18,7 @@
     }
 
     @if (!isDemoMode()) {
-      <div class="mode-switch-card">
-        <app-data-sources-panel />
-      </div>
+      <app-data-sources-panel />
     }
 
     <app-dataset-selector [mode]="mode()" />
@@ -46,29 +34,37 @@
   </aside>
 
   <section class="panel-right">
-    <div class="kpi-strip">
-      <div class="kpi-item">
-        <span class="kpi-label">Rows Scanned</span>
-        <span class="kpi-value">{{ store.scannedRows() }}</span>
-      </div>
-      <div class="kpi-item">
-        <span class="kpi-label">Rows Returned</span>
-        <span class="kpi-value">{{ store.resultCount() }}</span>
-      </div>
-      <div class="kpi-item">
-        <span class="kpi-label">Match Rate</span>
-        <span class="kpi-value">{{ store.matchRate() }}%</span>
-      </div>
-      <div class="kpi-item">
-        <span class="kpi-label">Execution Time</span>
-        <span class="kpi-value">
-          {{ store.lastExecutionMs() !== null ? store.lastExecutionMs() + ' ms' : 'Not run yet' }}
+    <div class="status-bar" role="status" aria-live="polite">
+      @if (store.lastExecutionMs() === null) {
+        <span class="status-idle">No query run yet</span>
+      } @else {
+        <span class="status-segment">
+          <span class="status-num">{{ store.scannedRows() }}</span>
+          <span class="status-lbl">scanned</span>
         </span>
-      </div>
-      <div class="kpi-item">
-        <span class="kpi-label">Transformation</span>
-        <span class="kpi-value kpi-value-soft">{{ transformationLabel() }}</span>
-      </div>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.resultCount() }}</span>
+          <span class="status-lbl">returned</span>
+        </span>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.matchRate() }}%</span>
+          <span class="status-lbl">match</span>
+        </span>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.lastExecutionMs() }} ms</span>
+          <span class="status-lbl">exec</span>
+        </span>
+        @if (transformationLabel() !== 'None') {
+          <span class="status-dot" aria-hidden="true">·</span>
+          <span class="status-segment">
+            <span class="status-lbl">transform</span>
+            <span class="status-num">{{ transformationLabel() }}</span>
+          </span>
+        }
+      }
     </div>
 
     <app-results-table class="results-section" />
