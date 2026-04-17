@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AppMode, AppModeService } from './core/app-mode.service';
-import { PrivacyConsentService } from './core/privacy-consent.service';
 import { ThemeService } from './core/theme.service';
 
 @Component({
@@ -20,7 +19,6 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly appMode = inject(AppModeService);
-  protected readonly privacyConsent = inject(PrivacyConsentService);
   protected readonly theme = inject(ThemeService);
 
   ngOnInit(): void {
@@ -35,9 +33,5 @@ export class AppComponent implements OnInit {
       queryParams: { mode },
       queryParamsHandling: 'merge',
     });
-  }
-
-  protected acceptPrivacyConsent(): void {
-    this.privacyConsent.acceptConsent();
   }
 }

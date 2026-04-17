@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppMode, AppModeService } from '../../core/app-mode.service';
-import { PrivacyConsentService } from '../../core/privacy-consent.service';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
 
@@ -19,7 +18,6 @@ export class SettingsPageComponent {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly appMode = inject(AppModeService);
-  protected readonly privacyConsent = inject(PrivacyConsentService);
   protected readonly historyStore = inject(HistoryStore);
   protected readonly queryStore = inject(QueryStore);
 
