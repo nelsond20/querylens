@@ -34,6 +34,9 @@
 .brand-lockup {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .header-title {
@@ -170,58 +173,27 @@
   overflow: hidden;
 }
 
-.privacy-overlay {
-  position: fixed;
-  inset: 0;
-  background: color-mix(in oklch, var(--bg) 80%, transparent);
-  display: grid;
-  place-items: center;
-  z-index: 20;
-  padding: var(--space-4);
-  backdrop-filter: blur(4px);
+.privacy-footer {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-sub);
+  background: color-mix(in oklch, var(--surface) 92%, var(--accent) 8%);
+  flex-shrink: 0;
 }
 
-.privacy-modal {
-  width: min(540px, 100%);
-  border: 1px solid var(--border);
-  border-radius: var(--r-xl);
-  background: var(--surface);
-  padding: var(--space-6);
+.privacy-footer-text {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.privacy-modal h2 {
-  font-size: var(--text-md);
-  font-weight: var(--weight-semi);
-  color: var(--text);
-}
-
-.privacy-modal p {
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
   color: var(--text-soft);
-  max-width: 65ch;
+  line-height: var(--leading-normal);
 }
 
-.btn-accept {
-  align-self: flex-end;
-  border: none;
-  border-radius: var(--r-md);
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semi);
-  padding: var(--space-2) var(--space-6);
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease-expo),
-              transform var(--dur-fast) var(--ease-expo);
-}
-
-.btn-accept:hover {
-  background: var(--accent-hi);
-  transform: translateY(-1px);
+.privacy-footer-text a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 @media (max-width: 860px) {
@@ -247,5 +219,13 @@
 
   .header-privacy-note {
     display: none;
+  }
+
+  .privacy-footer {
+    display: block;
+  }
+
+  .privacy-footer-text {
+    display: block;
   }
 }

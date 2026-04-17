@@ -1,10 +1,9 @@
 <div class="root-shell">
   <header class="root-header">
     <div class="header-main">
-      <div class="brand-lockup">
+      <a class="brand-lockup" routerLink="/landing" queryParamsHandling="merge" aria-label="Go to home">
         <h1 class="header-title">QueryLens</h1>
-        <p class="header-subtitle">Local-first analytics workspace</p>
-      </div>
+      </a>
 
       <nav class="main-nav">
         <a
@@ -46,21 +45,12 @@
   <main class="root-content">
     <router-outlet />
   </main>
-</div>
 
-@if (!privacyConsent.consentAccepted()) {
-  <div class="privacy-overlay">
-    <div class="privacy-modal">
-      <h2>Data Privacy Notice</h2>
-      <p>
-        QueryLens runs fully in your browser. Imported files, fetched API payloads, history, and preferences are kept
-        locally in your device storage.
-      </p>
-      <p>
-        By continuing, you confirm you are authorized to analyze the data you load and understand it stays only on this
-        browser profile.
-      </p>
-      <button class="btn-accept" (click)="acceptPrivacyConsent()">Accept and Continue</button>
-    </div>
-  </div>
-}
+  <footer class="privacy-footer" role="status" aria-live="polite">
+    <p class="privacy-footer-text">
+      QueryLens runs locally in your browser. No data is sent to QueryLens servers, and no non-essential cookies are
+      used.
+      <a routerLink="/settings" queryParamsHandling="merge">Privacy details</a>
+    </p>
+  </footer>
+</div>
