@@ -37,6 +37,7 @@
   border-right: 1px solid #24324f;
   background: #0d1220cc;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .workspace-body.demo-mode .panel-left {
