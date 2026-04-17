@@ -71,9 +71,9 @@
     <app-transform-panel />
 
     <section class="fold-panel">
-      <button class="fold-toggle" (click)="toggleHistory()">
+      <button class="fold-toggle" (click)="toggleHistory()" [attr.aria-expanded]="historyExpanded()">
         <span>Query History</span>
-        <span class="chevron">{{ historyExpanded() ? '▲' : '▼' }}</span>
+        <span class="chevron" [class.is-open]="historyExpanded()" aria-hidden="true"></span>
       </button>
       @if (historyExpanded()) {
         <div class="fold-body">
@@ -83,9 +83,9 @@
     </section>
 
     <section class="fold-panel">
-      <button class="fold-toggle" (click)="toggleDiff()">
+      <button class="fold-toggle" (click)="toggleDiff()" [attr.aria-expanded]="diffExpanded()">
         <span>Diff Analysis</span>
-        <span class="chevron">{{ diffExpanded() ? '▲' : '▼' }}</span>
+        <span class="chevron" [class.is-open]="diffExpanded()" aria-hidden="true"></span>
       </button>
       @if (diffExpanded()) {
         <div class="fold-body">

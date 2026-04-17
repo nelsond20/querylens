@@ -28,6 +28,13 @@ export const appRoutes: Routes = [
       ),
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./pages/privacy-page/privacy-page.component').then(
+        (m) => m.PrivacyPageComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'landing',
   },

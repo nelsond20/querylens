@@ -22,6 +22,10 @@ export class SettingsPageComponent {
   protected readonly queryStore = inject(QueryStore);
 
   protected setMode(mode: AppMode): void {
+    if (this.appMode.mode() !== mode) {
+      this.queryStore.resetForMode(mode);
+    }
+
     this.appMode.setMode(mode);
     this.router.navigate([], {
       relativeTo: this.route,

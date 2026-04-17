@@ -27,6 +27,26 @@
   background: var(--surface-hi);
 }
 
+.chevron {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
+  transform: rotate(45deg) translate(-1px, -2px);
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-expo),
+              border-color var(--dur-fast) var(--ease-expo);
+}
+
+.chevron.is-open {
+  transform: rotate(-135deg) translate(-1px, 2px);
+}
+
+.toggle:hover .chevron {
+  border-color: var(--text);
+}
+
 .body {
   padding: var(--space-4);
   display: flex;

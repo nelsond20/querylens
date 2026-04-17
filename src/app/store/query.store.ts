@@ -208,6 +208,15 @@ export const QueryStore = signalStore(
       });
     },
 
+    resetForMode(mode: 'demo' | 'live'): void {
+      const customDatasets = store.customDatasets();
+      patchState(store, {
+        ...initialQueryState,
+        selectedDatasetId: mode === 'demo' ? 'users' : customDatasets[0]?.id ?? initialQueryState.selectedDatasetId,
+        customDatasets,
+      });
+    },
+
     hydrateFrom(state: Partial<QueryState>): void {
       patchState(store, state);
     },

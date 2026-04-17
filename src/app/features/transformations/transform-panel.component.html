@@ -1,7 +1,7 @@
 <div class="panel">
-  <button class="toggle" (click)="toggle()">
+  <button class="toggle" (click)="toggle()" [attr.aria-expanded]="expanded()">
     <span>Transformation Studio</span>
-    <span class="chevron">{{ expanded() ? '▲' : '▼' }}</span>
+    <span class="chevron" [class.is-open]="expanded()" aria-hidden="true"></span>
   </button>
 
   @if (expanded()) {

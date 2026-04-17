@@ -103,6 +103,7 @@ export class WorkspacePageComponent implements OnInit {
   protected readonly isDemoMode = this.appModeService.isDemo;
 
   private readonly hydratedQueryToken = signal<string | null>(null);
+  private previousMode: 'demo' | 'live' | null = null;
 
   protected readonly activeDatasetName = computed(() => this.selectedDataset().name);
   protected readonly activeDatasetDescription = computed(() => this.selectedDataset().description);
@@ -127,6 +128,10 @@ export class WorkspacePageComponent implements OnInit {
     effect(() => {
       const mode = this.mode();
       const selected = this.store.selectedDataset();
+      if (this.previousMode !== null && this.previousMode !== mode) {
+        this.activePresetId.set('');
+      }
+      this.previousMode = mode;
 
       if (mode === 'demo' && selected.source !== 'built-in') {
         this.store.setDataset('users');
