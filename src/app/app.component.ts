@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AppMode, AppModeService } from './core/app-mode.service';
 import { PrivacyConsentService } from './core/privacy-consent.service';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit {
 
   protected readonly appMode = inject(AppModeService);
   protected readonly privacyConsent = inject(PrivacyConsentService);
+  protected readonly theme = inject(ThemeService);
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {

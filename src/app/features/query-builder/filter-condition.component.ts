@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { FieldDefinition } from '../../core/datasets/field-definition.model';
 import { FilterCondition } from '../../core/query-engine/filter-node.model';
 import { Operator } from '../../core/query-engine/operator.model';
+import { QlSelectComponent, SelectOption } from '../../shared/ui/ql-select/ql-select.component';
 
 const OPERATORS_BY_TYPE: Record<FieldDefinition['type'], { value: Operator; label: string }[]> = {
   string: [
@@ -37,7 +37,7 @@ const OPERATORS_BY_TYPE: Record<FieldDefinition['type'], { value: Operator; labe
 @Component({
   selector: 'app-filter-condition',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, QlSelectComponent],
   templateUrl: './filter-condition.component.html',
   styleUrl: './filter-condition.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +56,19 @@ export class FilterConditionComponent {
   get fieldType(): FieldDefinition['type'] {
     return this.fields.find((f) => f.key === this.condition.field)?.type ?? 'string';
   }
+
+  get fieldOptions(): SelectOption[] {
+    return this.fields.map((f) => ({ value: f.key, label: f.label }));
+  }
+
+  get operatorOptions(): SelectOption[] {
+    return this.operators.map((o) => ({ value: o.value, label: o.label }));
+  }
+
+  readonly booleanOptions: SelectOption[] = [
+    { value: 'true', label: 'true' },
+    { value: 'false', label: 'false' },
+  ];
 
   updateField(field: string): void {
     const fieldDef = this.fields.find((f) => f.key === field);

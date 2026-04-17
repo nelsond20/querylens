@@ -1,17 +1,14 @@
 .builder {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  border: 1px solid #263a5a;
-  border-radius: 12px;
-  padding: 0.65rem;
-  background: #0f1a2c99;
+  gap: var(--space-3);
 }
 
 .label {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semi);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #93a8cd;
+  letter-spacing: 0.07em;
+  color: var(--text-soft);
+  margin-bottom: var(--space-1);
 }

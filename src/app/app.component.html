@@ -25,6 +25,13 @@
         All processing stays in your browser. No data is sent to QueryLens servers.
       </p>
 
+      <button
+        class="theme-toggle"
+        (click)="theme.toggle()"
+        [title]="theme.isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [attr.aria-label]="theme.isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+      >{{ theme.isDark() ? '☀' : '☾' }}</button>
+
       <div class="experience-switch" role="group" aria-label="Experience mode">
         <button class="switch-btn" [class.active]="appMode.mode() === 'demo'" (click)="setExperience('demo')">
           Play Demo

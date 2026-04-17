@@ -4,24 +4,31 @@ export const appRoutes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'workspace',
+    redirectTo: 'landing',
+  },
+  {
+    path: 'landing',
+    loadComponent: () =>
+      import('./pages/landing-page/landing-page.component').then(
+        (m) => m.LandingPageComponent,
+      ),
   },
   {
     path: 'workspace',
     loadComponent: () =>
       import('./pages/workspace-page/workspace-page.component').then(
-        (module) => module.WorkspacePageComponent,
+        (m) => m.WorkspacePageComponent,
       ),
   },
   {
     path: 'settings',
     loadComponent: () =>
       import('./pages/settings-page/settings-page.component').then(
-        (module) => module.SettingsPageComponent,
+        (m) => m.SettingsPageComponent,
       ),
   },
   {
     path: '**',
-    redirectTo: 'workspace',
+    redirectTo: 'landing',
   },
 ];

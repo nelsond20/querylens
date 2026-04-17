@@ -1,12 +1,9 @@
 <section class="data-sources">
   <div class="section-head">
-    <div class="title-row">
+    <button class="title-row" (click)="toggleCollapsed()" [attr.aria-expanded]="!collapsed()">
       <h2 class="title">Live Data Sources</h2>
-      <button class="collapse-toggle" (click)="toggleCollapsed()">
-        {{ collapsed() ? '• Expand' : '• Collapse' }}
-      </button>
-    </div>
-    <p class="caption">Bring your own data via file upload or API endpoint.</p>
+      <span class="chevron" [class.is-open]="!collapsed()" aria-hidden="true"></span>
+    </button>
   </div>
 
   @if (!collapsed()) {
@@ -64,7 +61,7 @@
   }
 
   <div class="block">
-    <span class="block-title">Imported Datasets</span>
+    <span class="title">Imported Datasets</span>
     @if (store.customDatasets().length === 0) {
       <p class="empty">No custom datasets yet.</p>
     } @else {

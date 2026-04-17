@@ -8,34 +8,31 @@
     <div class="body">
       <div class="row">
         <label class="label">Type</label>
-        <select class="select" [value]="type()" (change)="type.set($any($event.target).value)">
-          <option value="sort">Sort</option>
-          <option value="map">Map</option>
-          <option value="groupBy">Group By</option>
-        </select>
+        <ql-select
+          [options]="typeOptions"
+          [value]="type()"
+          (valueChange)="type.set($any($event))"
+        />
       </div>
 
       @switch (type()) {
         @case ('sort') {
           <div class="row">
             <label class="label">Field</label>
-            <select class="select" [value]="sortField()" (change)="sortField.set($any($event.target).value)">
-              @for (field of fields; track field.key) {
-                <option [value]="field.key">{{ field.label }}</option>
-              }
-            </select>
+            <ql-select
+              [options]="fieldOptions"
+              [value]="sortField()"
+              (valueChange)="sortField.set($any($event))"
+            />
           </div>
 
           <div class="row">
             <label class="label">Direction</label>
-            <select
-              class="select"
+            <ql-select
+              [options]="directionOptions"
               [value]="sortDirection()"
-              (change)="sortDirection.set($any($event.target).value)"
-            >
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
+              (valueChange)="sortDirection.set($any($event))"
+            />
           </div>
         }
 
@@ -57,40 +54,30 @@
         @case ('groupBy') {
           <div class="row">
             <label class="label">Group by</label>
-            <select class="select" [value]="groupField()" (change)="groupField.set($any($event.target).value)">
-              @for (field of fields; track field.key) {
-                <option [value]="field.key">{{ field.label }}</option>
-              }
-            </select>
+            <ql-select
+              [options]="fieldOptions"
+              [value]="groupField()"
+              (valueChange)="groupField.set($any($event))"
+            />
           </div>
 
           <div class="row">
             <label class="label">Aggregate</label>
-            <select
-              class="select"
+            <ql-select
+              [options]="aggregateOptions"
               [value]="groupAggregate()"
-              (change)="groupAggregate.set($any($event.target).value)"
-            >
-              <option value="count">Count</option>
-              <option value="sum">Sum</option>
-              <option value="avg">Avg</option>
-              <option value="min">Min</option>
-              <option value="max">Max</option>
-            </select>
+              (valueChange)="groupAggregate.set($any($event))"
+            />
           </div>
 
           @if (groupAggregate() !== 'count') {
             <div class="row">
               <label class="label">Value field</label>
-              <select
-                class="select"
+              <ql-select
+                [options]="fieldOptions"
                 [value]="groupValueField()"
-                (change)="groupValueField.set($any($event.target).value)"
-              >
-                @for (field of fields; track field.key) {
-                  <option [value]="field.key">{{ field.label }}</option>
-                }
-              </select>
+                (valueChange)="groupValueField.set($any($event))"
+              />
             </div>
           }
         }
