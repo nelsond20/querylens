@@ -6,26 +6,35 @@
     (valueChange)="updateField($any($event))"
   />
 
-  <ql-select
-    [compact]="true"
-    [options]="operatorOptions"
-    [value]="condition.operator"
-    (valueChange)="updateOperator($any($event))"
-  />
-
   @if (fieldType === 'boolean') {
+    <span class="operator-fixed" aria-label="Equals operator">=</span>
+  } @else {
     <ql-select
       [compact]="true"
-      [options]="booleanOptions"
-      [value]="valueAsText"
-      (valueChange)="updateValue($any($event))"
+      [options]="operatorOptions"
+      [value]="condition.operator"
+      (valueChange)="updateOperator($any($event))"
     />
+  }
+
+  @if (fieldType === 'boolean') {
+    <select
+      class="input boolean-select"
+      [value]="valueAsText === 'true' || valueAsText === 'false' ? valueAsText : ''"
+      (change)="updateValue($any($event.target).value)"
+    >
+      <option value="" disabled>Select value</option>
+      <option value="true">true</option>
+      <option value="false">false</option>
+    </select>
   } @else {
     <input
       class="input"
-      [type]="fieldType === 'number' ? 'number' : fieldType === 'date' ? 'date' : 'text'"
-      [value]="valueAsText"
-      (input)="updateValue($any($event.target).value)"
+      [type]="fieldType === 'date' ? 'date' : 'text'"
+      [attr.inputmode]="fieldType === 'number' ? 'decimal' : null"
+      [value]="localValue()"
+      (input)="onInputChange($any($event.target).value)"
+      (change)="updateValue($any($event.target).value)"
       [placeholder]="inputPlaceholder"
     />
   }

@@ -42,15 +42,15 @@ const QUERY_PRESETS: QueryPreset[] = [
     transformation: { type: 'sort', field: 'value', direction: 'desc' },
   },
   {
-    id: 'inactive-admins',
-    title: 'Inactive Admin Accounts',
-    description: 'Surface admin users currently inactive to trigger recovery actions.',
+    id: 'inactive-editors',
+    title: 'Inactive Editor Accounts',
+    description: 'Surface editor users currently inactive to trigger recovery actions.',
     datasetId: 'users',
     filterTree: {
       type: 'group',
       op: 'AND',
       children: [
-        { type: 'condition', field: 'role', operator: 'eq', value: 'admin' },
+        { type: 'condition', field: 'role', operator: 'eq', value: 'editor' },
         { type: 'condition', field: 'status', operator: 'eq', value: 'inactive' },
       ],
     },

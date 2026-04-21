@@ -21,6 +21,9 @@
 }
 
 .btn-op {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   background: color-mix(in oklch, var(--accent) 10%, var(--surface));
   border: 1px solid color-mix(in oklch, var(--accent) 35%, var(--border-sub));
   border-radius: var(--r-pill);
@@ -30,11 +33,20 @@
   padding: 2px var(--space-3);
   cursor: pointer;
   letter-spacing: 0.05em;
-  transition: background-color var(--dur-fast) var(--ease-expo);
+  user-select: none;
+  transition: background-color var(--dur-fast) var(--ease-expo),
+              border-color var(--dur-fast) var(--ease-expo);
 }
 
 .btn-op:hover {
   background: color-mix(in oklch, var(--accent) 18%, var(--surface));
+  border-color: color-mix(in oklch, var(--accent) 55%, var(--border-sub));
+}
+
+.op-label {
+  display: inline-block;
+  min-width: 2ch;
+  text-align: center;
 }
 
 .group-label {
@@ -46,19 +58,32 @@
 
 .btn-remove-group {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
   background: none;
-  border: none;
-  color: var(--error);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   line-height: 1;
   padding: 0;
+  flex-shrink: 0;
   opacity: 0.7;
-  transition: opacity var(--dur-fast) var(--ease-expo);
+  transition: opacity var(--dur-fast) var(--ease-expo),
+              color var(--dur-fast) var(--ease-expo),
+              border-color var(--dur-fast) var(--ease-expo),
+              background-color var(--dur-fast) var(--ease-expo);
 }
 
 .btn-remove-group:hover {
   opacity: 1;
+  color: var(--error);
+  background: color-mix(in oklch, var(--error) 10%, transparent);
+  border-color: color-mix(in oklch, var(--error) 25%, transparent);
 }
 
 .group-children {
@@ -89,4 +114,10 @@
 .btn-add:hover {
   border-color: var(--accent);
   color: var(--text);
+}
+
+@media (max-width: 1100px) {
+  .group.nested {
+    margin-left: var(--space-2);
+  }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FieldDefinition } from '../../core/datasets/field-definition.model';
 import { FilterCondition } from '../../core/query-engine/filter-node.model';
@@ -42,11 +42,19 @@ const OPERATORS_BY_TYPE: Record<FieldDefinition['type'], { value: Operator; labe
   styleUrl: './filter-condition.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterConditionComponent {
+export class FilterConditionComponent implements OnChanges {
   @Input({ required: true }) condition!: FilterCondition;
   @Input({ required: true }) fields!: FieldDefinition[];
   @Output() conditionChange = new EventEmitter<FilterCondition>();
   @Output() remove = new EventEmitter<void>();
+
+  protected readonly localValue = signal('');
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['condition']) {
+      this.localValue.set(this.valueAsText);
+    }
+  }
 
   get operators(): { value: Operator; label: string }[] {
     const field = this.fields.find((f) => f.key === this.condition.field);
@@ -65,10 +73,9 @@ export class FilterConditionComponent {
     return this.operators.map((o) => ({ value: o.value, label: o.label }));
   }
 
-  readonly booleanOptions: SelectOption[] = [
-    { value: 'true', label: 'true' },
-    { value: 'false', label: 'false' },
-  ];
+  onInputChange(value: string): void {
+    this.localValue.set(value);
+  }
 
   updateField(field: string): void {
     const fieldDef = this.fields.find((f) => f.key === field);
