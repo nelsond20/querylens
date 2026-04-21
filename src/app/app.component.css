@@ -84,6 +84,7 @@
   color: var(--text);
   background: var(--surface-hi);
   border-color: var(--border);
+  animation: nav-active-pop var(--dur-base) var(--ease-expo);
 }
 
 .header-rail {
@@ -143,6 +144,7 @@
   border-color: transparent;
   color: var(--on-accent);
   transform: translateY(-1px);
+  animation: switch-active-pop var(--dur-base) var(--ease-expo);
 }
 
 .switch-btn:active {
@@ -170,6 +172,7 @@
 .theme-icon {
   display: inline-block;
   line-height: 1;
+  transform: translateY(1px);
   transition: transform var(--dur-base) var(--ease-expo);
 }
 
@@ -180,17 +183,31 @@
 }
 
 .theme-toggle:hover .theme-icon {
-  transform: rotate(18deg);
+  transform: translateY(1px) rotate(18deg);
 }
 
 .theme-toggle:active .theme-icon {
-  transform: scale(0.88);
+  transform: translateY(1px) scale(0.88);
 }
 
 .root-content {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  position: relative;
+}
+
+.route-stage {
+  height: 100%;
+  min-height: 0;
+}
+
+.route-pulse-a {
+  animation: route-stage-enter-a 240ms var(--ease-expo);
+}
+
+.route-pulse-b {
+  animation: route-stage-enter-b 240ms var(--ease-expo);
 }
 
 .privacy-footer {
@@ -214,6 +231,48 @@
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+@keyframes nav-active-pop {
+  from {
+    transform: translateY(1px) scale(0.985);
+    opacity: 0.72;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes switch-active-pop {
+  from {
+    transform: translateY(1px) scale(0.97);
+  }
+  to {
+    transform: translateY(-1px) scale(1);
+  }
+}
+
+@keyframes route-stage-enter-a {
+  from {
+    opacity: 0.34;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes route-stage-enter-b {
+  from {
+    opacity: 0.34;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 860px) {

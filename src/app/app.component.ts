@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { AppMode, AppModeService } from './core/app-mode.service';
 import { QueryStore } from './store/query.store';
 import { ThemeService } from './core/theme.service';
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
   protected readonly appMode = inject(AppModeService);
   private readonly queryStore = inject(QueryStore);
   protected readonly theme = inject(ThemeService);
+  protected readonly routePulse = signal(0);
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -31,6 +33,15 @@ export class AppComponent implements OnInit {
       }
       this.appMode.setMode(mode);
     });
+
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.routePulse.update((value) => value + 1);
+      });
   }
 
   protected setExperience(mode: AppMode): void {

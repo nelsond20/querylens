@@ -43,7 +43,13 @@
   </header>
 
   <main class="root-content">
-    <router-outlet />
+    <div
+      class="route-stage"
+      [class.route-pulse-a]="routePulse() % 2 === 0"
+      [class.route-pulse-b]="routePulse() % 2 === 1"
+    >
+      <router-outlet />
+    </div>
   </main>
 
   <footer class="privacy-footer" role="status" aria-live="polite">
