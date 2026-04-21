@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppMode, AppModeService } from '../../core/app-mode.service';
+import { ThemeService } from '../../core/theme.service';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
 
@@ -18,6 +19,7 @@ export class SettingsPageComponent {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly appMode = inject(AppModeService);
+  protected readonly theme = inject(ThemeService);
   protected readonly historyStore = inject(HistoryStore);
   protected readonly queryStore = inject(QueryStore);
 
@@ -38,5 +40,9 @@ export class SettingsPageComponent {
     this.historyStore.clearAll();
     this.queryStore.clearCustomDatasets();
     this.queryStore.clearQuery();
+  }
+
+  protected setTheme(mode: 'light' | 'dark'): void {
+    this.theme.setDark(mode === 'dark');
   }
 }

@@ -22,6 +22,28 @@
     </div>
   </article>
 
+  <article class="setting-card">
+    <h2>Theme</h2>
+    <p>Choose how the interface is rendered in your browser.</p>
+
+    <div class="mode-row">
+      <button
+        class="mode-button"
+        [class.active]="!theme.isDark()"
+        (click)="setTheme('light')"
+      >
+        Light
+      </button>
+      <button
+        class="mode-button"
+        [class.active]="theme.isDark()"
+        (click)="setTheme('dark')"
+      >
+        Dark
+      </button>
+    </div>
+  </article>
+
   <article class="setting-card danger">
     <h2>Local Data Reset</h2>
     <p>Clear custom datasets, saved history, and current query state from local storage.</p>
