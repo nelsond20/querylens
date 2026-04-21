@@ -1,53 +1,55 @@
 <div class="diff-panel">
   <div class="controls">
-    <span class="label">Compare with history</span>
-    <select
-      class="select"
+    <span class="label">Compare against a saved snapshot</span>
+    <ql-select
+      [options]="historyOptions"
       [value]="selectedHistoryId()"
-      (change)="selectedHistoryId.set($any($event.target).value)"
-    >
-      <option value="">- Select -</option>
-      @for (entry of historyStore.entries(); track entry.id) {
-        <option [value]="entry.id">{{ entry.name }} ({{ entry.datasetId }})</option>
-      }
-    </select>
+      placeholder="Select a saved query"
+      (valueChange)="selectedHistoryId.set($any($event))"
+    />
   </div>
 
   @if (diffResult(); as result) {
     <div class="stats">
-      <span class="stat added">+{{ result.added.length }} added</span>
-      <span class="stat removed">-{{ result.removed.length }} removed</span>
-      <span class="stat unchanged">{{ result.unchanged.length }} unchanged</span>
+      <span class="stat added">+{{ result.added.length }} new rows</span>
+      <span class="stat removed">-{{ result.removed.length }} dropped rows</span>
+      <span class="stat unchanged">{{ result.unchanged.length }} rows unchanged</span>
     </div>
 
     <div class="split">
-      <div class="side">
-        <div class="side-label">Historical</div>
+      <section class="side side-added">
+        <div class="side-label">Added in current query (first 20)</div>
         <div class="rows">
-          @for (row of historicalRows(); track $index) {
+          @if (addedPreview().length === 0) {
+            <div class="empty-row">No added rows</div>
+          }
+          @for (row of addedPreview(); track $index) {
             <div class="row-item">
               @for (column of columns; track column) {
-                <span class="cell">{{ row[column] }}</span>
+                <span class="cell">{{ formatCell(row, column) }}</span>
               }
             </div>
           }
         </div>
-      </div>
+      </section>
 
-      <div class="side">
-        <div class="side-label">Current</div>
+      <section class="side side-removed">
+        <div class="side-label">Removed from current query (first 20)</div>
         <div class="rows">
-          @for (row of queryStore.displayedResults(); track $index) {
+          @if (removedPreview().length === 0) {
+            <div class="empty-row">No removed rows</div>
+          }
+          @for (row of removedPreview(); track $index) {
             <div class="row-item">
               @for (column of columns; track column) {
-                <span class="cell">{{ row[column] }}</span>
+                <span class="cell">{{ formatCell(row, column) }}</span>
               }
             </div>
           }
         </div>
-      </div>
+      </section>
     </div>
   } @else {
-    <div class="empty">Select a history entry to compare</div>
+    <div class="empty">Select a saved query from history to run a diff.</div>
   }
 </div>

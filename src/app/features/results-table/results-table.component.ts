@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { getDataset } from '../../core/datasets/datasets.registry';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { QueryStore } from '../../store/query.store';
 
 @Component({
@@ -12,22 +22,92 @@ import { QueryStore } from '../../store/query.store';
   styleUrl: './results-table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResultsTableComponent {
+export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   protected readonly store = inject(QueryStore);
+  protected readonly rowHeight = 35;
+  protected readonly searchTerm = signal('');
+  protected readonly sortField = signal('');
+  protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
+  private resizeObserver: ResizeObserver | null = null;
+
+  @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
+  @ViewChild('tableWrapper') private tableWrapper?: ElementRef<HTMLElement>;
+
+  protected readonly rows = computed(() => {
+    const baseRows = this.store.displayedResults();
+    const term = this.searchTerm().trim().toLowerCase();
+
+    const filtered = term
+      ? baseRows.filter((row) => Object.values(row).some((value) => String(value).toLowerCase().includes(term)))
+      : baseRows;
+
+    const sortField = this.sortField();
+    if (!sortField) {
+      return filtered;
+    }
+
+    const direction = this.sortDirection();
+    return [...filtered].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+
+      if (aValue === bValue) {
+        return 0;
+      }
+
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+
+      const compare = String(aValue).localeCompare(String(bValue));
+      return direction === 'asc' ? compare : -compare;
+    });
+  });
+
+  private readonly viewportResizeEffect = effect(() => {
+    this.rows();
+    queueMicrotask(() => {
+      this.viewport?.checkViewportSize();
+    });
+  });
 
   get columns(): string[] {
-    return getDataset(this.store.selectedDatasetId()).fields.map((field) => field.key);
+    const rows = this.store.displayedResults();
+    if (rows.length > 0) {
+      return Object.keys(rows[0]);
+    }
+    return this.store.selectedDataset().fields.map((field) => field.key);
   }
 
   get columnLabels(): Record<string, string> {
-    return getDataset(this.store.selectedDatasetId()).fields.reduce(
+    const labels = this.store.selectedDataset().fields.reduce(
       (acc, field) => ({ ...acc, [field.key]: field.label }),
       {} as Record<string, string>,
     );
+    for (const column of this.columns) {
+      if (!labels[column]) {
+        labels[column] = column;
+      }
+    }
+    return labels;
+  }
+
+  protected onSearch(event: Event): void {
+    this.searchTerm.set((event.target as HTMLInputElement).value);
+  }
+
+  protected setSort(field: string): void {
+    if (this.sortField() === field) {
+      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
+      return;
+    }
+
+    this.sortField.set(field);
+    this.sortDirection.set('asc');
   }
 
   protected exportCsv(): void {
-    const rows = this.store.displayedResults();
+    const rows = this.rows();
     if (rows.length === 0) {
       return;
     }
@@ -42,11 +122,29 @@ export class ResultsTableComponent {
   }
 
   protected exportJson(): void {
-    this.download(
-      `querylens-${Date.now()}.json`,
-      JSON.stringify(this.store.displayedResults(), null, 2),
-      'application/json',
-    );
+    this.download(`querylens-${Date.now()}.json`, JSON.stringify(this.rows(), null, 2), 'application/json');
+  }
+
+  protected trackByIndex(index: number): number {
+    return index;
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof ResizeObserver !== 'undefined' && this.tableWrapper) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.viewport?.checkViewportSize();
+      });
+      this.resizeObserver.observe(this.tableWrapper.nativeElement);
+    }
+
+    queueMicrotask(() => {
+      this.viewport?.checkViewportSize();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   }
 
   private download(filename: string, content: string, type: string): void {

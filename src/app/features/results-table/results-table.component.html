@@ -1,41 +1,47 @@
-<div class="table-wrapper">
+<div class="table-wrapper" #tableWrapper>
   <div class="table-header">
-    <span class="result-count">{{ store.resultCount() }} results</span>
+    <div class="table-meta">
+      <span class="result-count">{{ rows().length }} visible rows</span>
+      <span class="result-subtext">from {{ store.resultCount() }} query results</span>
+    </div>
 
-    @if (store.displayedResults().length > 0) {
-      <div class="export-actions">
-        <button class="btn-export" (click)="exportCsv()">CSV</button>
-        <button class="btn-export" (click)="exportJson()">JSON</button>
-      </div>
-    }
+    <div class="table-tools">
+      <input
+        class="search-input"
+        type="search"
+        placeholder="Search in current results..."
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+      />
+      <button class="btn-export" (click)="exportCsv()" [disabled]="rows().length === 0">CSV</button>
+      <button class="btn-export" (click)="exportJson()" [disabled]="rows().length === 0">JSON</button>
+    </div>
   </div>
 
-  @if (store.displayedResults().length === 0) {
+  @if (rows().length === 0) {
     <div class="empty-state">
-      <span>Run a query to see results</span>
+      <h3>No rows to display yet</h3>
+      <p>Run a query or launch a preset from the Scenario Lab to populate this workspace.</p>
     </div>
   } @else {
-    <div class="table-container">
-      <table class="table table-head">
-        <thead>
-          <tr>
-            @for (column of columns; track column) {
-              <th>{{ columnLabels[column] }}</th>
+    <div class="table-container" [style.--col-count]="columns.length">
+      <div class="grid-head">
+        @for (column of columns; track column) {
+          <button class="head-cell" (click)="setSort(column)">
+            <span>{{ columnLabels[column] }}</span>
+            @if (sortField() === column) {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
             }
-          </tr>
-        </thead>
-      </table>
+          </button>
+        }
+      </div>
 
-      <cdk-virtual-scroll-viewport itemSize="36" class="viewport">
-        <table class="table">
-          <tbody>
-            <tr *cdkVirtualFor="let row of store.displayedResults()">
-              @for (column of columns; track column) {
-                <td>{{ row[column] }}</td>
-              }
-            </tr>
-          </tbody>
-        </table>
+      <cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="viewport">
+        <div class="data-row" *cdkVirtualFor="let row of rows(); trackBy: trackByIndex">
+          @for (column of columns; track column) {
+            <div class="data-cell">{{ row[column] }}</div>
+          }
+        </div>
       </cdk-virtual-scroll-viewport>
     </div>
   }

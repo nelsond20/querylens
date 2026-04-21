@@ -16,14 +16,15 @@ const rows = Array.from({ length: 1000 }, (_, i) => ({
 
 export const eventsDataset: Dataset = {
   id: 'events',
-  name: 'Eventos',
-  description: 'Dataset de eventos de analytics (1000 filas)',
+  name: 'Events',
+  description: 'Behavior analytics event stream (1000 rows)',
   fields: [
     { key: 'eventId', label: 'Event ID', type: 'string' },
     { key: 'userId', label: 'User ID', type: 'string' },
-    { key: 'type', label: 'Tipo', type: 'string' },
+    { key: 'type', label: 'Event Type', type: 'string' },
     { key: 'timestamp', label: 'Timestamp', type: 'date' },
-    { key: 'value', label: 'Valor', type: 'number' },
+    { key: 'value', label: 'Value', type: 'number' },
   ],
   rows,
+  source: 'built-in',
 };

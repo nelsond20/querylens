@@ -1,13 +1,14 @@
 .builder {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: var(--space-3);
 }
 
 .label {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semi);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #8b949e;
+  letter-spacing: 0.07em;
+  color: var(--text-soft);
+  margin-bottom: var(--space-1);
 }

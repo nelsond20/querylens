@@ -1,9 +1,11 @@
 <div class="group" [class.nested]="depth > 0">
   <div class="group-header">
-    <button class="btn-op" (click)="toggleOp()">{{ group.op }}</button>
-    <span class="group-label">group</span>
+    <button class="btn-op" (click)="toggleOp()" [title]="'Toggle to ' + (group.op === 'AND' ? 'OR' : 'AND')">
+      <span class="op-label">{{ group.op }}</span>
+    </button>
+    <span class="group-label">logic group</span>
     @if (depth > 0) {
-      <button class="btn-remove-group" (click)="remove.emit()" title="Remove group">x</button>
+      <button class="btn-remove-group" (click)="remove.emit()" title="Remove group" aria-label="Remove group">×</button>
     }
   </div>
 

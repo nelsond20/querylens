@@ -17,15 +17,16 @@ const rows = Array.from({ length: 300 }, (_, i) => ({
 
 export const productsDataset: Dataset = {
   id: 'products',
-  name: 'Productos',
-  description: 'Dataset de catálogo de productos (300 filas)',
+  name: 'Products',
+  description: 'Catalog and inventory overview (300 rows)',
   fields: [
     { key: 'id', label: 'ID', type: 'string' },
-    { key: 'name', label: 'Nombre', type: 'string' },
-    { key: 'category', label: 'Categoría', type: 'string' },
-    { key: 'price', label: 'Precio', type: 'number' },
+    { key: 'name', label: 'Name', type: 'string' },
+    { key: 'category', label: 'Category', type: 'string' },
+    { key: 'price', label: 'Price', type: 'number' },
     { key: 'stock', label: 'Stock', type: 'number' },
     { key: 'rating', label: 'Rating', type: 'number' },
   ],
   rows,
+  source: 'built-in',
 };

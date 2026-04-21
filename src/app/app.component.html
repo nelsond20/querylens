@@ -1,53 +1,56 @@
-<div class="app-shell">
-  <header class="app-header">
-    <span class="app-title">QueryLens</span>
-    <button class="btn-share" (click)="shareUrl()" title="Copy shareable URL">Share</button>
+<div class="root-shell">
+  <header class="root-header">
+    <div class="header-main">
+      <a class="brand-lockup" routerLink="/landing" queryParamsHandling="merge" aria-label="Go to home">
+        <h1 class="header-title">QueryLens</h1>
+      </a>
+
+      <nav class="main-nav">
+        <a
+          routerLink="/workspace"
+          queryParamsHandling="merge"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Workspace
+        </a>
+        <a routerLink="/settings" queryParamsHandling="merge" routerLinkActive="active">Settings</a>
+      </nav>
+    </div>
+
+    <div class="header-rail">
+      <p class="header-privacy-note">
+        <span class="privacy-dot"></span>
+        All processing stays in your browser. No data is sent to QueryLens servers.
+      </p>
+
+      <button
+        class="theme-toggle"
+        (click)="theme.toggle()"
+        [title]="theme.isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [attr.aria-label]="theme.isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+      ><span class="theme-icon" aria-hidden="true">{{ theme.isDark() ? '☀' : '☾' }}</span></button>
+
+      <div class="experience-switch" role="group" aria-label="Experience mode">
+        <button class="switch-btn" [class.active]="appMode.mode() === 'demo'" (click)="setExperience('demo')">
+          Play Demo
+        </button>
+        <button class="switch-btn" [class.active]="appMode.mode() === 'live'" (click)="setExperience('live')">
+          Live Mode
+        </button>
+      </div>
+    </div>
   </header>
 
-  <main class="app-body">
-    <aside class="panel-left">
-      <app-dataset-selector />
-      <app-query-builder />
-      <app-query-editor />
-
-      <div class="query-actions">
-        <button class="btn-run" (click)="store.executeQuery()" [disabled]="store.isExecuting()">
-          {{ store.isExecuting() ? 'Running...' : 'Run Query' }}
-        </button>
-        <button class="btn-clear" (click)="store.clearQuery()">Clear</button>
-      </div>
-    </aside>
-
-    <section class="panel-right">
-      <app-results-table class="results-section" />
-      <app-transform-panel />
-
-      <div class="tabs-secondary">
-        <button
-          class="tab"
-          [class.active]="store.activeTab() === 'history'"
-          (click)="store.hydrateFrom({ activeTab: 'history' })"
-        >
-          History
-        </button>
-        <button
-          class="tab"
-          [class.active]="store.activeTab() === 'diff'"
-          (click)="store.hydrateFrom({ activeTab: 'diff' })"
-        >
-          Diff
-        </button>
-      </div>
-
-      <div class="tab-content">
-        @if (store.activeTab() === 'history') {
-          <app-history-panel />
-        }
-
-        @if (store.activeTab() === 'diff') {
-          <app-diff-panel />
-        }
-      </div>
-    </section>
+  <main class="root-content">
+    <router-outlet />
   </main>
+
+  <footer class="privacy-footer" role="status" aria-live="polite">
+    <p class="privacy-footer-text">
+      QueryLens runs locally in your browser. No data is sent to QueryLens servers, and no non-essential cookies are
+      used.
+      <a routerLink="/privacy" queryParamsHandling="merge">Privacy details</a>
+    </p>
+  </footer>
 </div>

@@ -1,0 +1,97 @@
+<main class="workspace-body" [class.demo-mode]="isDemoMode()" [class.live-mode]="!isDemoMode()">
+  <aside class="panel-left">
+    @if (isDemoMode()) {
+      <section class="preset-panel">
+        <span class="section-title">Scenarios</span>
+        <div class="preset-list">
+          @for (preset of presets; track preset.id) {
+            <button
+              class="preset-item"
+              [class.active]="activePresetId() === preset.id"
+              (click)="runPreset(preset)"
+            >
+              {{ preset.title }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (!isDemoMode()) {
+      <app-data-sources-panel />
+    }
+
+    <app-dataset-selector [mode]="mode()" />
+    <app-query-builder />
+    <app-query-editor />
+
+    <div class="query-actions">
+      <button class="btn-run" (click)="store.executeQuery()" [disabled]="store.isExecuting()">
+        {{ store.isExecuting() ? 'Running query...' : 'Run Query' }}
+      </button>
+      <button class="btn-clear" (click)="store.clearQuery()">Reset</button>
+    </div>
+  </aside>
+
+  <section class="panel-right">
+    <div class="status-bar" role="status" aria-live="polite">
+      @if (store.lastExecutionMs() === null) {
+        <span class="status-idle">No query run yet</span>
+      } @else {
+        <span class="status-segment">
+          <span class="status-num">{{ store.scannedRows() }}</span>
+          <span class="status-lbl">scanned</span>
+        </span>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.resultCount() }}</span>
+          <span class="status-lbl">returned</span>
+        </span>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.matchRate() }}%</span>
+          <span class="status-lbl">match</span>
+        </span>
+        <span class="status-dot" aria-hidden="true">·</span>
+        <span class="status-segment">
+          <span class="status-num">{{ store.lastExecutionMs() }} ms</span>
+          <span class="status-lbl">exec</span>
+        </span>
+        @if (transformationLabel() !== 'None') {
+          <span class="status-dot" aria-hidden="true">·</span>
+          <span class="status-segment">
+            <span class="status-lbl">transform</span>
+            <span class="status-num">{{ transformationLabel() }}</span>
+          </span>
+        }
+      }
+    </div>
+
+    <app-results-table class="results-section" />
+    <app-transform-panel />
+
+    <section class="fold-panel">
+      <button class="fold-toggle" (click)="toggleHistory()" [attr.aria-expanded]="historyExpanded()">
+        <span>Query History</span>
+        <span class="chevron" [class.is-open]="historyExpanded()" aria-hidden="true"></span>
+      </button>
+      @if (historyExpanded()) {
+        <div class="fold-body">
+          <app-history-panel />
+        </div>
+      }
+    </section>
+
+    <section class="fold-panel">
+      <button class="fold-toggle" (click)="toggleDiff()" [attr.aria-expanded]="diffExpanded()">
+        <span>Diff Analysis</span>
+        <span class="chevron" [class.is-open]="diffExpanded()" aria-hidden="true"></span>
+      </button>
+      @if (diffExpanded()) {
+        <div class="fold-body">
+          <app-diff-panel />
+        </div>
+      }
+    </section>
+  </section>
+</main>

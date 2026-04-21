@@ -1,70 +1,47 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { deserialize, serialize } from './core/serialization/query-serializer';
-import { DiffPanelComponent } from './features/diff/diff-panel.component';
-import { HistoryPanelComponent } from './features/history/history-panel.component';
-import { QueryBuilderComponent } from './features/query-builder/query-builder.component';
-import { DatasetSelectorComponent } from './features/query-builder/dataset-selector.component';
-import { QueryEditorComponent } from './features/query-editor/query-editor.component';
-import { ResultsTableComponent } from './features/results-table/results-table.component';
-import { TransformPanelComponent } from './features/transformations/transform-panel.component';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AppMode, AppModeService } from './core/app-mode.service';
 import { QueryStore } from './store/query.store';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule,
-    DatasetSelectorComponent,
-    QueryBuilderComponent,
-    QueryEditorComponent,
-    ResultsTableComponent,
-    TransformPanelComponent,
-    DiffPanelComponent,
-    HistoryPanelComponent,
-  ],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  protected readonly store = inject(QueryStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+
+  protected readonly appMode = inject(AppModeService);
+  private readonly queryStore = inject(QueryStore);
+  protected readonly theme = inject(ThemeService);
 
   ngOnInit(): void {
-    const params = new URLSearchParams(window.location.search);
-    const queryParam = params.get('q');
-
-    if (!queryParam) {
-      return;
-    }
-
-    const parsed = deserialize(queryParam);
-    if (!parsed) {
-      return;
-    }
-
-    this.store.hydrateFrom({
-      selectedDatasetId: parsed.datasetId,
-      filterTree: parsed.filterTree,
-      rawQuery: JSON.stringify(parsed.filterTree, null, 2),
-      rawQueryError: null,
-      transformation: parsed.transformation,
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const mode: AppMode = params.get('mode') === 'demo' ? 'demo' : 'live';
+      if (this.appMode.mode() !== mode) {
+        this.queryStore.resetForMode(mode);
+      }
+      this.appMode.setMode(mode);
     });
-
-    this.store.executeQuery();
-    if (parsed.transformation) {
-      this.store.applyTransformation(parsed.transformation);
-    }
   }
 
-  protected shareUrl(): void {
-    const encoded = serialize({
-      datasetId: this.store.selectedDatasetId(),
-      filterTree: this.store.filterTree(),
-      transformation: this.store.transformation(),
-    });
+  protected setExperience(mode: AppMode): void {
+    if (this.appMode.mode() !== mode) {
+      this.queryStore.resetForMode(mode);
+    }
 
-    const url = `${window.location.origin}${window.location.pathname}?q=${encoded}`;
-    navigator.clipboard.writeText(url);
+    this.appMode.setMode(mode);
+    this.router.navigate(['/workspace'], {
+      queryParams: { mode },
+      queryParamsHandling: 'merge',
+    });
   }
 }

@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { getDataset } from '../../core/datasets/datasets.registry';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { diff, DiffResult } from '../../core/query-engine/diff-engine';
 import { execute } from '../../core/query-engine/query-engine';
 import { applyTransformation } from '../../core/query-engine/transform-engine';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
+import { QlSelectComponent, SelectOption } from '../../shared/ui/ql-select/ql-select.component';
 
 @Component({
   selector: 'app-diff-panel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, QlSelectComponent],
   templateUrl: './diff-panel.component.html',
   styleUrl: './diff-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +19,13 @@ export class DiffPanelComponent {
   protected readonly queryStore = inject(QueryStore);
   protected readonly historyStore = inject(HistoryStore);
   protected readonly selectedHistoryId = signal('');
+
+  get historyOptions(): SelectOption[] {
+    return this.historyStore.entries().map((e) => ({
+      value: e.id,
+      label: `${e.name} (${e.datasetId})`,
+    }));
+  }
 
   protected readonly historicalRows = computed(() => {
     const id = this.selectedHistoryId();
@@ -31,7 +38,10 @@ export class DiffPanelComponent {
       return [];
     }
 
-    const dataset = getDataset(entry.datasetId);
+    const dataset = this.queryStore.findDataset(entry.datasetId);
+    if (!dataset) {
+      return [];
+    }
     const base = execute(dataset.rows, entry.filterTree);
 
     return entry.transformation ? applyTransformation(base, entry.transformation) : base;
@@ -45,6 +55,9 @@ export class DiffPanelComponent {
     return diff(this.historicalRows(), this.queryStore.displayedResults());
   });
 
+  protected readonly addedPreview = computed(() => this.diffResult()?.added.slice(0, 20) ?? []);
+  protected readonly removedPreview = computed(() => this.diffResult()?.removed.slice(0, 20) ?? []);
+
   get columns(): string[] {
     const current = this.queryStore.displayedResults();
     if (current.length > 0) {
@@ -53,5 +66,10 @@ export class DiffPanelComponent {
 
     const historical = this.historicalRows();
     return historical.length > 0 ? Object.keys(historical[0]) : [];
+  }
+
+  protected formatCell(row: Record<string, unknown>, column: string): string {
+    const value = row[column];
+    return value === undefined || value === null ? '-' : String(value);
   }
 }

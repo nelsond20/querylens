@@ -1,8 +1,16 @@
 <div class="selector">
-  <label class="label">Dataset</label>
-  <select class="select" [value]="store.selectedDatasetId()" (change)="select($any($event.target).value)">
-    @for (dataset of datasets; track dataset.id) {
-      <option [value]="dataset.id">{{ dataset.name }}</option>
+  <label class="label">Dataset Scope</label>
+
+  @if (datasets.length === 0) {
+    <ql-select [options]="[]" [disabled]="true" placeholder="No datasets available" />
+    @if (mode === 'live') {
+      <span class="hint">Import a dataset from Live Data Sources to begin.</span>
     }
-  </select>
+  } @else {
+    <ql-select
+      [options]="datasetOptions"
+      [value]="store.selectedDatasetId()"
+      (valueChange)="select($any($event))"
+    />
+  }
 </div>

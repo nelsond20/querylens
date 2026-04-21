@@ -36,9 +36,18 @@ export const HistoryStore = signalStore(
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     },
 
+    clearAll(): void {
+      patchState(store, { entries: [] });
+      localStorage.removeItem(STORAGE_KEY);
+    },
+
     loadEntry(id: string): void {
       const entry = store.entries().find((item) => item.id === id);
       if (!entry) {
+        return;
+      }
+
+      if (!queryStore.hasDataset(entry.datasetId)) {
         return;
       }
 
