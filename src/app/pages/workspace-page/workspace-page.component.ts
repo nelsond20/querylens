@@ -70,6 +70,8 @@ const QUERY_PRESETS: QueryPreset[] = [
   },
 ];
 
+const MAX_SHARED_QUERY_PARAM_LENGTH = 16000;
+
 @Component({
   selector: 'app-workspace-page',
   standalone: true,
@@ -150,6 +152,10 @@ export class WorkspacePageComponent implements OnInit {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const queryParam = params.get('q');
       if (!queryParam || this.hydratedQueryToken() === queryParam) {
+        return;
+      }
+
+      if (queryParam.length > MAX_SHARED_QUERY_PARAM_LENGTH) {
         return;
       }
 
