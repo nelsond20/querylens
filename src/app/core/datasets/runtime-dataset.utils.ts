@@ -3,6 +3,17 @@ import { FieldDefinition } from './field-definition.model';
 
 type SourceType = Extract<Dataset['source'], 'file' | 'api'>;
 
+export interface JsonRowExtractionOptions {
+  maxRows?: number;
+  maxTraversalNodes?: number;
+  maxTraversalDepth?: number;
+}
+
+export const MAX_JSON_FILE_SIZE_BYTES = 8 * 1024 * 1024;
+export const MAX_JSON_ROWS = 50000;
+export const MAX_JSON_TRAVERSAL_NODES = 200000;
+export const MAX_JSON_TRAVERSAL_DEPTH = 64;
+
 export function createRuntimeDataset(params: {
   id: string;
   name: string;
@@ -24,21 +35,75 @@ export function createRuntimeDataset(params: {
   };
 }
 
-export function parseJsonRows(input: string): Record<string, unknown>[] {
+export function parseJsonRows(input: string, options: JsonRowExtractionOptions = {}): Record<string, unknown>[] {
   const parsed = JSON.parse(input) as unknown;
+  return extractRowsFromPayload(parsed, options);
+}
 
-  if (Array.isArray(parsed)) {
-    if (!parsed.every((item) => isRecord(item))) {
-      throw new Error('JSON array must contain only objects');
+export function extractRowsFromPayload(
+  payload: unknown,
+  options: JsonRowExtractionOptions = {},
+): Record<string, unknown>[] {
+  const maxRows = options.maxRows ?? MAX_JSON_ROWS;
+  const maxTraversalNodes = options.maxTraversalNodes ?? MAX_JSON_TRAVERSAL_NODES;
+  const maxTraversalDepth = options.maxTraversalDepth ?? MAX_JSON_TRAVERSAL_DEPTH;
+
+  const stack: Array<{ value: unknown; depth: number }> = [{ value: payload, depth: 0 }];
+  let visitedNodes = 0;
+  let largest: Record<string, unknown>[] | null = null;
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) {
+      continue;
     }
-    return parsed;
+
+    visitedNodes += 1;
+    if (visitedNodes > maxTraversalNodes) {
+      throw new Error('JSON payload is too complex to import safely');
+    }
+
+    if (current.depth > maxTraversalDepth) {
+      throw new Error('JSON payload is too deeply nested to import safely');
+    }
+
+    if (Array.isArray(current.value)) {
+      if (isObjectArray(current.value)) {
+        if (!largest || current.value.length > largest.length) {
+          largest = current.value;
+        }
+        continue;
+      }
+
+      if (current.depth === maxTraversalDepth) {
+        continue;
+      }
+
+      for (let i = current.value.length - 1; i >= 0; i -= 1) {
+        stack.push({ value: current.value[i], depth: current.depth + 1 });
+      }
+
+      continue;
+    }
+
+    if (!isRecord(current.value) || current.depth === maxTraversalDepth) {
+      continue;
+    }
+
+    for (const value of Object.values(current.value)) {
+      stack.push({ value, depth: current.depth + 1 });
+    }
   }
 
-  if (isRecord(parsed) && Array.isArray(parsed['rows']) && parsed['rows'].every((item) => isRecord(item))) {
-    return parsed['rows'] as Record<string, unknown>[];
+  if (!largest) {
+    throw new Error('JSON payload must contain an object array at any depth');
   }
 
-  throw new Error('JSON payload must be an object array or an object with a rows array');
+  if (largest.length > maxRows) {
+    throw new Error(`JSON dataset exceeds ${maxRows.toLocaleString()} rows limit`);
+  }
+
+  return largest;
 }
 
 export function parseCsvRows(input: string): Record<string, unknown>[] {
@@ -272,4 +337,13 @@ function humanizeLabel(value: string): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isObjectArray(value: unknown[]): value is Record<string, unknown>[] {
+  for (let i = 0; i < value.length; i += 1) {
+    if (!isRecord(value[i])) {
+      return false;
+    }
+  }
+  return true;
 }

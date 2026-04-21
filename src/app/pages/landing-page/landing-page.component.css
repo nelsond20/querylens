@@ -49,13 +49,13 @@
   align-items: center;
   gap: var(--space-8);
   text-align: center;
-  animation: land-enter var(--dur-slow) var(--ease-expo) both;
 }
 
 .brand {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  animation: land-enter var(--dur-slow) var(--ease-expo) 40ms both;
 }
 
 .wordmark {
@@ -79,6 +79,7 @@
   gap: var(--space-2);
   justify-content: center;
   list-style: none;
+  animation: land-enter var(--dur-slow) var(--ease-expo) 110ms both;
 }
 
 .chip {
@@ -94,7 +95,7 @@
 
 .cta {
   background: var(--accent);
-  border: none;
+  border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--border-sub));
   border-radius: var(--r-lg);
   color: var(--on-accent);
   font-size: var(--text-base);
@@ -106,16 +107,23 @@
   gap: var(--space-2);
   letter-spacing: 0.01em;
   transition: background-color var(--dur-fast) var(--ease-expo),
-              transform var(--dur-fast) var(--ease-expo);
+              box-shadow var(--dur-fast) var(--ease-expo);
+  animation: land-enter var(--dur-slow) var(--ease-expo) 170ms both;
 }
 
 .cta:hover {
   background: var(--accent-hi);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 28%, transparent);
+}
+
+.cta:focus-visible {
+  outline: 2px solid color-mix(in oklch, var(--accent) 60%, transparent);
+  outline-offset: 3px;
 }
 
 .cta:active {
-  transform: translateY(0);
+  background: var(--accent);
+  box-shadow: none;
 }
 
 .cta-arrow {
@@ -124,7 +132,7 @@
 }
 
 .cta:hover .cta-arrow {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .foot {

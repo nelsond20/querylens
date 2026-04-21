@@ -36,7 +36,7 @@
         }
       </div>
 
-      <cdk-virtual-scroll-viewport itemSize="36" class="viewport">
+      <cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="viewport">
         <div class="data-row" *cdkVirtualFor="let row of rows(); trackBy: trackByIndex">
           @for (column of columns; track column) {
             <div class="data-cell">{{ row[column] }}</div>

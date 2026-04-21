@@ -159,8 +159,7 @@
 
 .viewport {
   flex: 1;
-  min-height: 240px;
-  height: 100%;
+  min-height: 0;
   overflow-y: auto;
   background: var(--bg);
 }
@@ -168,13 +167,9 @@
 .data-row {
   display: grid;
   grid-template-columns: repeat(var(--col-count), minmax(140px, 1fr));
-  min-height: 34px;
+  height: 35px;
   border-bottom: 1px solid var(--border-sub);
   transition: background-color 60ms linear;
-}
-
-.data-row:last-child {
-  border-bottom: none;
 }
 
 .data-row:hover {

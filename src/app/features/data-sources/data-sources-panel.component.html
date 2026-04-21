@@ -10,8 +10,8 @@
     <div class="block">
       <span class="block-title">Import File</span>
       <label class="file-input">
-        <input type="file" accept=".json,.csv" (change)="onFileSelected($event)" [disabled]="loadingFile()" />
-        <span>{{ loadingFile() ? 'Importing file...' : 'Choose CSV or JSON file' }}</span>
+        <input type="file" accept=".json" (change)="onFileSelected($event)" [disabled]="loadingFile()" />
+        <span>{{ loadingFile() ? 'Importing file...' : 'Choose JSON file' }}</span>
       </label>
     </div>
 

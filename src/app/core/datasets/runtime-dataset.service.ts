@@ -2,28 +2,30 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Dataset } from './dataset.model';
-import { createRuntimeDataset, parseCsvRows, parseJsonRows } from './runtime-dataset.utils';
+import {
+  MAX_JSON_FILE_SIZE_BYTES,
+  createRuntimeDataset,
+  extractRowsFromPayload,
+  parseJsonRows,
+} from './runtime-dataset.utils';
 
 @Injectable({ providedIn: 'root' })
 export class RuntimeDatasetService {
   constructor(private readonly http: HttpClient) {}
 
   async createFromFile(file: File): Promise<Dataset> {
-    const rawText = await file.text();
     const extension = file.name.split('.').pop()?.toLowerCase();
     const baseName = file.name.replace(/\.[^/.]+$/, '') || 'Imported Dataset';
 
-    if (extension === 'csv') {
-      const rows = parseCsvRows(rawText);
-      return createRuntimeDataset({
-        id: this.makeId('file'),
-        name: baseName,
-        description: `Imported from CSV file: ${file.name}`,
-        source: 'file',
-        rows,
-      });
+    if (extension !== 'json') {
+      throw new Error('Only .json files are supported');
     }
 
+    if (file.size > MAX_JSON_FILE_SIZE_BYTES) {
+      throw new Error(`JSON file exceeds ${(MAX_JSON_FILE_SIZE_BYTES / 1024 / 1024).toFixed(0)} MB limit`);
+    }
+
+    const rawText = await file.text();
     const rows = parseJsonRows(rawText);
     return createRuntimeDataset({
       id: this.makeId('file'),
@@ -42,8 +44,7 @@ export class RuntimeDatasetService {
   }): Promise<Dataset> {
     const headers = this.buildHeaders(config.bearerToken, config.headersJson);
     const payload = await firstValueFrom(this.http.get<unknown>(config.url, { headers }));
-
-    const rows = this.extractRows(payload);
+    const rows = extractRowsFromPayload(payload);
 
     return createRuntimeDataset({
       id: this.makeId('api'),
@@ -52,26 +53,6 @@ export class RuntimeDatasetService {
       source: 'api',
       rows,
     });
-  }
-
-  private extractRows(payload: unknown): Record<string, unknown>[] {
-    if (Array.isArray(payload) && payload.every((item) => this.isRecord(item))) {
-      return payload as Record<string, unknown>[];
-    }
-
-    if (this.isRecord(payload)) {
-      const directRows = payload['rows'];
-      if (Array.isArray(directRows) && directRows.every((item) => this.isRecord(item))) {
-        return directRows as Record<string, unknown>[];
-      }
-
-      const dataRows = payload['data'];
-      if (Array.isArray(dataRows) && dataRows.every((item) => this.isRecord(item))) {
-        return dataRows as Record<string, unknown>[];
-      }
-    }
-
-    throw new Error('API response must be an object array, or an object containing rows/data array');
   }
 
   private buildHeaders(token?: string, headersJson?: string): HttpHeaders {
@@ -93,9 +74,5 @@ export class RuntimeDatasetService {
 
   private makeId(source: 'file' | 'api'): string {
     return `${source}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  }
-
-  private isRecord(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 }

@@ -133,8 +133,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   animation: panel-enter var(--dur-slow) var(--ease-expo) 60ms backwards;
 }
 
@@ -174,7 +173,7 @@
 
 .results-section {
   flex: 1;
-  min-height: 240px;
+  min-height: 0;
 }
 
 .fold-panel {

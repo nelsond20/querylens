@@ -24,6 +24,7 @@ import { QueryStore } from '../../store/query.store';
 })
 export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   protected readonly store = inject(QueryStore);
+  protected readonly rowHeight = 35;
   protected readonly searchTerm = signal('');
   protected readonly sortField = signal('');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');

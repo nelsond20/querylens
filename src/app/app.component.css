@@ -77,6 +77,7 @@
 
 .main-nav a:hover {
   color: var(--text);
+  background: color-mix(in oklch, var(--surface-hi) 70%, transparent);
 }
 
 .main-nav a.active {
@@ -134,6 +135,7 @@
 
 .switch-btn:hover {
   color: var(--text);
+  background: color-mix(in oklch, var(--surface-hi) 70%, transparent);
 }
 
 .switch-btn.active {
@@ -141,6 +143,10 @@
   border-color: transparent;
   color: var(--on-accent);
   transform: translateY(-1px);
+}
+
+.switch-btn:active {
+  transform: translateY(0);
 }
 
 .theme-toggle {
@@ -161,10 +167,24 @@
               color var(--dur-fast) var(--ease-expo);
 }
 
+.theme-icon {
+  display: inline-block;
+  line-height: 1;
+  transition: transform var(--dur-base) var(--ease-expo);
+}
+
 .theme-toggle:hover {
   border-color: var(--border);
   background: var(--surface-hi);
   color: var(--text);
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(18deg);
+}
+
+.theme-toggle:active .theme-icon {
+  transform: scale(0.88);
 }
 
 .root-content {

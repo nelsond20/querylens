@@ -8,6 +8,32 @@ describe('runtime-dataset utils', () => {
     expect(rows[0]['id']).toBe('1');
   });
 
+  it('parses nested JSON object arrays', () => {
+    const rows = parseJsonRows('{"meta":{"generatedAt":"2026-01-01"},"data":[{"id":1},{"id":2}]}');
+    expect(rows).toHaveLength(2);
+    expect(rows[1]['id']).toBe(2);
+  });
+
+  it('selects the largest object array when multiple arrays exist', () => {
+    const rows = parseJsonRows(
+      '{"summary":[{"id":"s1"}],"payload":{"groups":[{"id":"g1"},{"id":"g2"},{"id":"g3"}],"items":[{"id":"i1"}]}}',
+    );
+    expect(rows).toHaveLength(3);
+    expect(rows[2]['id']).toBe('g3');
+  });
+
+  it('throws if no object array exists anywhere in payload', () => {
+    expect(() => parseJsonRows('{"title":"fishing","data":[1,2,3]}')).toThrow(
+      'JSON payload must contain an object array at any depth',
+    );
+  });
+
+  it('throws when rows exceed import limit', () => {
+    expect(() => parseJsonRows('{"data":[{"id":1},{"id":2},{"id":3}]}', { maxRows: 2 })).toThrow(
+      'JSON dataset exceeds 2 rows limit',
+    );
+  });
+
   it('parses CSV with header', () => {
     const rows = parseCsvRows('id,name\n1,Alice\n2,Bob');
     expect(rows).toHaveLength(2);
