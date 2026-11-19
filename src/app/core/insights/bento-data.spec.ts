@@ -129,6 +129,32 @@ describe('buildTimeline', () => {
   });
 });
 
+describe('buildTimeline edge ranges', () => {
+  const fields: FieldDefinition[] = [{ key: 'at', label: 'At', type: 'date' }];
+
+  it('returns null when every valid date falls in one bucket', () => {
+    const rows = [{ at: '2024-01-01T10:00:00Z' }, { at: '2024-01-01T12:00:00Z' }];
+    expect(buildTimeline(fields, rows, rows)).toBeNull();
+  });
+
+  it('ignores a far-future sentinel date instead of squashing the real data', () => {
+    const rows: Record<string, unknown>[] = Array.from({ length: 300 }, (_, i) => ({
+      at: new Date(Date.UTC(2024, 0, 1) + (i % 200) * 86_400_000).toISOString(),
+    }));
+    rows.push({ at: '9999-12-31' });
+    const timeline = buildTimeline(fields, rows, rows)!;
+    expect(timeline).not.toBeNull();
+    expect(timeline.buckets.length).toBeLessThanOrEqual(240);
+    expect(timeline.unit).toBe('week');
+    expect(timeline.buckets.reduce((sum, b) => sum + b.total, 0)).toBe(300);
+  });
+
+  it('returns null for a range too wide to chart, such as IDs parsed as years', () => {
+    const rows = Array.from({ length: 1000 }, (_, i) => ({ at: `SKU-${String((i + 1) * 50).padStart(8, '0')}` }));
+    expect(buildTimeline(fields, rows, rows)).toBeNull();
+  });
+});
+
 describe('performance', () => {
   it('recomputes the bento for 50k rows in under 50 ms (warm, best of 5)', () => {
     const fields: FieldDefinition[] = [

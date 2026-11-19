@@ -7,7 +7,7 @@ const PAD_TOP = 10;
 const PAD_BOTTOM = 4;
 
 function pointsFor(values: number[]): string {
-  const max = Math.max(1, ...values);
+  const max = values.reduce((m, v) => (v > m ? v : m), 1);
   const step = values.length > 1 ? W / (values.length - 1) : 0;
   return values
     .map((v, i) => `${(i * step).toFixed(1)},${(H - PAD_BOTTOM - (v / max) * (H - PAD_TOP - PAD_BOTTOM)).toFixed(1)}`)
