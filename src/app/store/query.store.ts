@@ -17,6 +17,9 @@ import { initialQueryState, QueryState } from './query-state.model';
 
 const CUSTOM_DATASETS_STORAGE_KEY = 'querylens:custom-datasets';
 
+/** Datasets above this many rows are filtered in a Web Worker. */
+export const WORKER_ROW_THRESHOLD = 5000;
+
 export const QueryStore = signalStore(
   { providedIn: 'root' },
   withState<QueryState>(initialQueryState),
@@ -152,7 +155,7 @@ export const QueryStore = signalStore(
       const start = performance.now();
       const scannedRows = dataset.rows.length;
 
-      if (dataset.rows.length > 5000) {
+      if (dataset.rows.length > WORKER_ROW_THRESHOLD) {
         patchState(store, { isExecuting: true, scannedRows });
 
         const worker = new Worker(new URL('../workers/query.worker', import.meta.url), {
