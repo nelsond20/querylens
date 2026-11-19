@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dataset } from '../../core/datasets/dataset.model';
@@ -13,7 +14,7 @@ export interface DatasetGroup {
 @Component({
   selector: 'app-dataset-selector',
   standalone: true,
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin, QlIconComponent],
+  imports: [A11yModule, CdkConnectedOverlay, CdkOverlayOrigin, QlIconComponent],
   templateUrl: './dataset-selector.component.html',
   styleUrl: './dataset-selector.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +42,22 @@ export class DatasetSelectorComponent {
     if (id !== this.store.selectedDatasetId()) {
       this.store.setDataset(id);
       this.store.executeQuery();
+    }
+  }
+
+  /** Arrow keys move between options; Home/End jump; Tab is trapped by cdkTrapFocus, Escape closes. */
+  protected onMenuKeydown(event: KeyboardEvent): void {
+    const menu = event.currentTarget as HTMLElement;
+    const options = Array.from(menu.querySelectorAll<HTMLButtonElement>('.option'));
+    const index = options.indexOf(document.activeElement as HTMLButtonElement);
+    let next: number | null = null;
+    if (event.key === 'ArrowDown') next = index < 0 ? 0 : (index + 1) % options.length;
+    else if (event.key === 'ArrowUp') next = index <= 0 ? options.length - 1 : index - 1;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = options.length - 1;
+    if (next !== null) {
+      event.preventDefault();
+      options[next]?.focus();
     }
   }
 
