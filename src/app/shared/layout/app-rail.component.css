@@ -114,3 +114,73 @@
   font-size: var(--text-16);
   color: var(--ink-text-hi);
 }
+
+/* ── Below 900px the rail becomes a bottom tab bar ── */
+@media (max-width: 899px) {
+  :host,
+  :host(.expanded) {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    z-index: 30;
+    border-top: 1px solid var(--ink-hi);
+  }
+
+  .rail {
+    flex-direction: row;
+    gap: 0;
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .logo,
+  .bottom .item:not([href='/settings']) {
+    display: none;
+  }
+
+  .group,
+  .bottom {
+    flex-direction: row;
+    margin: 0;
+    gap: 0;
+  }
+
+  .group:not(.bottom) {
+    flex: 1;
+  }
+
+  .item {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-height: 52px;
+    padding: 0 4px;
+    text-align: center;
+  }
+
+  .item.active::before {
+    left: 30%;
+    right: 30%;
+    top: -6px;
+    bottom: auto;
+    width: auto;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+  }
+
+  .label,
+  :host(.expanded) .label {
+    opacity: 1;
+  }
+
+  .label-main {
+    font-size: var(--text-11);
+  }
+
+  .label-hint {
+    display: none;
+  }
+}

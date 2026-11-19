@@ -97,41 +97,27 @@
   --text-40: 2.5rem;
   --text-64: 4rem;
 
-  /* Legacy aliases kept for components during migration */
-  --text-xs:   var(--text-11);
+  /* Short aliases still used by components */
   --text-sm:   var(--text-12);
-  --text-base: var(--text-14);
-  --text-md:   var(--text-16);
-  --text-lg:   var(--text-20);
-  --text-xl:   var(--text-28);
-  --text-2xl:  var(--text-40);
 
   --weight-normal: 400;
   --weight-medium: 500;
   --weight-semi:   600;
-  --weight-bold:   700;
 
   --leading-tight:   1.2;
   --leading-normal:  1.5;
-  --leading-relaxed: 1.65;
 
   --space-1:  4px;
   --space-2:  8px;
   --space-3:  12px;
   --space-4:  16px;
-  --space-5:  20px;
   --space-6:  24px;
   --space-8:  32px;
-  --space-12: 48px;
-  --space-16: 64px;
-  --space-24: 96px;
 
   --dur-fast:    120ms;
   --dur-base:    180ms;
   --dur-slow:    300ms;
   --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-quart:  cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   /* Radii by hierarchy */
   --r-input:   8px;
@@ -141,9 +127,6 @@
   --r-feature: 20px;
   --r-pill:    999px;
   --r-sm: 6px;
-  --r-md: var(--r-input);
-  --r-lg: var(--r-cond);
-  --r-xl: var(--r-tile);
 }
 
 /* ───────────────────────── Tokens: Prisma dark ───────────────────────── */

@@ -18,3 +18,11 @@
 .marketing-main {
   flex: 1;
 }
+
+@media (max-width: 899px) {
+  .app-shell {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+}
