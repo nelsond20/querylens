@@ -6,6 +6,9 @@ import { deserialize } from '../../core/serialization/query-serializer';
 import { DataSourcesPanelComponent } from '../../features/data-sources/data-sources-panel.component';
 import { DiffControlsComponent } from '../../features/diff/diff-controls.component';
 import { DiffViewComponent } from '../../features/diff/diff-view.component';
+import { OnboardingService } from '../../features/onboarding/onboarding.service';
+import { OrientationStripComponent } from '../../features/onboarding/orientation-strip.component';
+import { TourComponent } from '../../features/onboarding/tour.component';
 import { HistoryPanelComponent } from '../../features/history/history-panel.component';
 import { DatasetSelectorComponent } from '../../features/query-builder/dataset-selector.component';
 import { QueryBuilderComponent } from '../../features/query-builder/query-builder.component';
@@ -52,6 +55,8 @@ const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
     DiffControlsComponent,
     DiffViewComponent,
     HistoryPanelComponent,
+    OrientationStripComponent,
+    TourComponent,
     QlIconComponent,
     QlSegmentedComponent,
     QueryBuilderComponent,
@@ -76,6 +81,7 @@ export class WorkspacePageComponent implements OnInit {
   protected readonly palette = inject(CommandRegistryService);
   protected readonly share = inject(ShareService);
   private readonly toast = inject(ToastService);
+  protected readonly onboarding = inject(OnboardingService);
 
   protected readonly editorMode = signal<'visual' | 'json'>('visual');
   protected readonly editorOptions: SegmentedOption[] = [
