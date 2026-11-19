@@ -1,46 +1,36 @@
-<div class="card">
-  <div class="card-head">
-    <span class="dataset"><ql-icon name="database" [size]="14" /> Events</span>
-    <span class="hint">Live, using the real query engine. Click a filter.</span>
-  </div>
-
-  <div class="chips" role="group" aria-label="Filters, combined with AND">
-    <span class="and" aria-hidden="true">AND</span>
-    @for (chip of chips; track chip.id) {
-      <button type="button" class="chip-toggle" [class.on]="on()[chip.id]" [attr.aria-pressed]="!!on()[chip.id]" (click)="toggle(chip.id)">
-        <span class="box" aria-hidden="true">
-          @if (on()[chip.id]) {
-            <svg viewBox="0 0 12 12" width="10" height="10"><path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          }
-        </span>
-        {{ chip.label }}
-      </button>
+<div class="query" role="group" aria-label="Filters, combined with AND">
+  <span class="where">Rows where</span>
+  @for (chip of chips; track chip.id; let last = $last) {
+    <button type="button" class="token" [class.on]="on()[chip.id]" [attr.aria-pressed]="!!on()[chip.id]" (click)="toggle(chip.id)">
+      {{ chip.label }}
+    </button>
+    @if (!last) {
+      <span class="and" aria-hidden="true">and</span>
     }
-  </div>
+  }
+</div>
 
+<div class="field" aria-hidden="true" (mouseover)="probeDot($event)" (mouseleave)="hovered.set(null)">
+  @for (dot of dots; track dot.id) {
+    <i class="dot" [class.hit]="hits().has(dot.id)" [style.--i]="dot.index" [attr.data-i]="dot.index"></i>
+  }
+</div>
+
+<div class="readout">
   <p class="result" aria-live="polite">
     <span class="big num" [qlCountUp]="returned()"></span>
     <span class="of">of {{ scanned.toLocaleString('en-US') }} rows match, in {{ ms() }} ms</span>
   </p>
-
-  <div class="mini" role="table" aria-label="First matching rows">
-    <div class="mini-row head" role="row">
-      <span role="columnheader">Event</span>
-      <span role="columnheader">Type</span>
-      <span role="columnheader">When</span>
-      <span role="columnheader" class="r">Value</span>
-    </div>
-    @for (row of preview(); track row.id) {
-      <div class="mini-row" role="row">
-        <span role="cell">{{ row.id }}</span>
-        <span role="cell"><span class="chip">{{ row.type }}</span></span>
-        <span role="cell">{{ row.when }}</span>
-        <span role="cell" class="r num">{{ row.value }}</span>
-      </div>
-    } @empty {
-      <p class="none">No rows match. Turn a filter off.</p>
+  <p class="probe" aria-hidden="true">
+    @if (probe(); as p) {
+      <span class="probe-id">{{ p.id }}</span>
+      <span>{{ p.type }}</span>
+      <span>{{ p.when }}</span>
+      <span class="num">{{ p.value }}</span>
+      <span class="probe-state" [class.hit]="p.hit">{{ p.hit ? 'match' : 'filtered out' }}</span>
+    } @else {
+      Hover a dot to see its row. Click a filter to try it.
     }
-  </div>
-
+  </p>
   <button type="button" class="open" (click)="openInWorkspace()">Open this query in the workspace</button>
 </div>

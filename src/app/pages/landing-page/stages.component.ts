@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 
 @Component({
-  selector: 'app-capabilities-bento',
+  selector: 'app-stages',
   standalone: true,
   imports: [QlIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './capabilities-bento.component.html',
-  styleUrl: './capabilities-bento.component.css',
+  templateUrl: './stages.component.html',
+  styleUrl: './stages.component.css',
 })
-export class CapabilitiesBentoComponent {
+export class StagesComponent {
   protected readonly json = `{
   "op": "AND",
   "children": [

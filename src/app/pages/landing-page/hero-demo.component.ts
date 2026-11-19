@@ -6,7 +6,6 @@ import { FilterCondition } from '../../core/query-engine/filter-node.model';
 import { execute } from '../../core/query-engine/query-engine';
 import { serialize } from '../../core/serialization/query-serializer';
 import { CountUpDirective } from '../../shared/ui/count-up.directive';
-import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 
 interface DemoChip {
   id: string;
@@ -24,12 +23,12 @@ const CHIPS: DemoChip[] = [
   },
 ];
 
-const SEQUENCE_MS = [500, 900, 1300];
+const SEQUENCE_MS = [900, 1700, 2500];
 
 @Component({
   selector: 'app-hero-demo',
   standalone: true,
-  imports: [CountUpDirective, QlIconComponent],
+  imports: [CountUpDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './hero-demo.component.html',
   styleUrl: './hero-demo.component.css',
@@ -39,6 +38,8 @@ export class HeroDemoComponent {
 
   protected readonly chips = CHIPS;
   protected readonly on = signal<Record<string, boolean>>({});
+  protected readonly hovered = signal<number | null>(null);
+  protected readonly dots = eventsDataset.rows.map((row, index) => ({ index, id: String(row['eventId']) }));
   protected readonly scanned = eventsDataset.rows.length;
 
   private readonly run = computed(() => {
@@ -48,18 +49,24 @@ export class HeroDemoComponent {
     return { rows, ms: Math.max(0.1, Math.round((performance.now() - start) * 10) / 10), active };
   });
 
+  protected readonly hits = computed(() => new Set(this.run().rows.map((row) => String(row['eventId']))));
   protected readonly returned = computed(() => this.run().rows.length);
   protected readonly ms = computed(() => this.run().ms);
-  protected readonly preview = computed(() =>
-    this.run()
-      .rows.slice(0, 5)
-      .map((row) => ({
-        id: String(row['eventId']),
-        type: String(row['type']),
-        value: Number(row['value']).toLocaleString('en-US'),
-        when: formatDateValue(row['timestamp']).split(',')[0],
-      })),
-  );
+
+  protected readonly probe = computed(() => {
+    const index = this.hovered();
+    if (index === null) {
+      return null;
+    }
+    const row = eventsDataset.rows[index];
+    return {
+      id: String(row['eventId']),
+      type: String(row['type']),
+      value: Number(row['value']).toLocaleString('en-US'),
+      when: formatDateValue(row['timestamp']).split(',')[0],
+      hit: this.hits().has(String(row['eventId'])),
+    };
+  });
 
   constructor() {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -67,7 +74,6 @@ export class HeroDemoComponent {
       this.on.set(Object.fromEntries(CHIPS.map((c) => [c.id, true])));
       return;
     }
-    // The one orchestrated moment on the page: each filter switches on and the count drops.
     const timers = CHIPS.map((chip, i) =>
       setTimeout(() => this.on.update((state) => ({ ...state, [chip.id]: true })), SEQUENCE_MS[i]),
     );
@@ -76,6 +82,11 @@ export class HeroDemoComponent {
 
   protected toggle(id: string): void {
     this.on.update((state) => ({ ...state, [id]: !state[id] }));
+  }
+
+  protected probeDot(event: Event): void {
+    const raw = (event.target as HTMLElement).dataset['i'];
+    this.hovered.set(raw === undefined ? null : Number(raw));
   }
 
   protected openInWorkspace(): void {

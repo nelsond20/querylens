@@ -1,0 +1,75 @@
+<section class="stage stage--filter" aria-labelledby="stage-filter">
+  <h2 id="stage-filter" class="word">Filter</h2>
+  <div class="copy">
+    <p class="say">Build the question visually or as JSON. The two stay in sync as you edit either one.</p>
+    <p class="aside">Nest AND and OR groups. Operators adapt to each field's type.</p>
+  </div>
+  <div class="paper-row">
+    <div class="paper builder">
+      <div class="op"><span class="on">AND</span><span>OR</span></div>
+      <div class="cond"><b>type</b><span>=</span><b>purchase</b></div>
+      <div class="cond"><b>value</b><span>&gt;</span><b>100</b></div>
+      <div class="group">
+        <div class="op"><span>AND</span><span class="on">OR</span></div>
+        <div class="cond"><b>country</b><span>in list</span><b>US, MX</b></div>
+        <div class="cond"><b>plan</b><span>starts with</span><b>pro</b></div>
+      </div>
+      <p class="outcome"><b class="num">1,284</b> of 50,000 rows match</p>
+    </div>
+    <pre class="paper code" aria-label="The same filter as JSON">{{ json }}</pre>
+  </div>
+</section>
+
+<section class="stage stage--transform" aria-labelledby="stage-transform">
+  <h2 id="stage-transform" class="word">Reshape</h2>
+  <div class="copy">
+    <p class="say">Sort, keep only some fields, or group and aggregate. Long results stay smooth.</p>
+    <p class="aside">Only the rows you can see are rendered, so 50,000 rows scroll like 50.</p>
+  </div>
+  <div class="paper-row">
+    <div class="paper bars-card">
+      <span class="chip chip--transform">Grouped by type (sum of value)</span>
+      <div class="bars">
+        @for (bar of bars; track bar.label) {
+          <div class="bar-row">
+            <span class="bar-label">{{ bar.label }}</span>
+            <span class="bar"><span [style.width.%]="bar.pct"></span></span>
+            <span class="bar-value num">{{ bar.value }}</span>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="paper window" aria-hidden="true">
+      @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+        <span class="line" [class.lit]="i > 2 && i < 6"></span>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="stage stage--compare" aria-labelledby="stage-compare">
+  <h2 id="stage-compare" class="word">Compare</h2>
+  <div class="copy">
+    <p class="say">Save a snapshot, change the query, and see exactly which rows came and went.</p>
+    <p class="aside">Every query, including its transformation, fits in a link you can share.</p>
+  </div>
+  <div class="paper-row">
+    <div class="paper diff">
+      <div class="stats">
+        <span class="stat added"><b class="num">+12</b> added</span>
+        <span class="stat removed"><b class="num">−4</b> removed</span>
+        <span class="stat"><b class="num">296</b> unchanged</span>
+      </div>
+      <div class="rows">
+        <div class="r added">evt-0412 <span>purchase</span><span class="num">148.5</span></div>
+        <div class="r added">evt-0577 <span>signup</span><span class="num">139.5</span></div>
+        <div class="r removed">evt-0203 <span>click</span><span class="num">102</span></div>
+      </div>
+    </div>
+    <div class="paper url">
+      <ql-icon name="lock" [size]="12" />
+      <span class="url-text">/workspace?q=eyJkYXRhc2V0SWQiOiJldmVudHMi…</span>
+      <ql-icon name="link" [size]="14" />
+    </div>
+  </div>
+</section>

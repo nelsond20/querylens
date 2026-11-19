@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GITHUB_URL } from '../../shared/layout/marketing-nav.component';
 import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
-import { CapabilitiesBentoComponent } from './capabilities-bento.component';
+import { StagesComponent } from './stages.component';
 import { HeroDemoComponent } from './hero-demo.component';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [RouterLink, QlIconComponent, HeroDemoComponent, CapabilitiesBentoComponent],
+  imports: [RouterLink, QlIconComponent, HeroDemoComponent, StagesComponent],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

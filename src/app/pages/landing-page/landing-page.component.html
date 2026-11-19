@@ -1,12 +1,12 @@
 <section class="hero">
-  <div class="hero-copy">
-    <h1>
-      Query, transform and compare data
-      <span class="spectrum">without leaving your browser.</span>
-    </h1>
+  <h1>
+    <span>Ask your data a question.</span>
+    <span>Watch the rows answer.</span>
+  </h1>
+  <div class="hero-foot">
     <p class="lead">
-      QueryLens is an analytics workbench that runs entirely on your device. Build filters visually or as JSON,
-      reshape the results, save snapshots and see what changed between them. Nothing is uploaded anywhere.
+      QueryLens is an analytics workbench that runs entirely on your device. Filter visually or as JSON, reshape
+      the results, save snapshots and see what changed between them.
     </p>
     <div class="ctas">
       <a class="btn btn--primary btn--lg" routerLink="/workspace">Open the workspace</a>
@@ -14,25 +14,25 @@
         <ql-icon name="github" /> View source
       </a>
     </div>
-    <p class="note">Sample data is loaded, so there's nothing to set up.</p>
   </div>
   <app-hero-demo class="hero-demo" />
 </section>
 
-<section class="capabilities" aria-labelledby="capabilities-title">
-  <div class="section-head">
-    <h2 id="capabilities-title">One workspace for the whole analysis loop</h2>
-    <p>Filter, reshape, keep a snapshot, compare, share. Each step has its own color in the app, so you always know where you are.</p>
-  </div>
-  <app-capabilities-bento />
-</section>
+<app-stages class="stages" />
 
-<section class="built" aria-labelledby="built-title">
-  <div class="section-head">
-    <h2 id="built-title">How it's built</h2>
-    <p>No backend. The query engine, transformations and diffs are plain TypeScript, covered by unit tests.</p>
+<section class="private" aria-labelledby="private-title">
+  <h2 id="private-title">Nothing leaves this tab.</h2>
+  <div class="private-body">
+    <p class="private-lead">
+      Drop in a JSON file or fetch from an API. It stays in your browser and is there next time. No backend, no
+      account, no upload.
+    </p>
+    <div class="inputs">
+      <div class="drop"><ql-icon name="upload" [size]="14" /> orders-2024.json</div>
+      <div class="field">https://api.example.com/orders</div>
+    </div>
   </div>
-  <ul class="built-list">
+  <ul class="built-list" aria-label="How it's built">
     @for (item of builtWith; track item.title) {
       <li>
         <h3>{{ item.title }}</h3>

@@ -36,13 +36,26 @@ export const GITHUB_URL = 'https://github.com/nelsond20/querylens';
     </header>
   `,
   styles: `
+    :host {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      padding: 12px 16px 0;
+      pointer-events: none;
+    }
     .nav {
+      pointer-events: auto;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 18px 24px;
+      gap: 20px;
+      padding: 6px 6px 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-pill);
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-tile);
     }
     .brand {
       display: inline-flex;
@@ -58,25 +71,30 @@ export const GITHUB_URL = 'https://github.com/nelsond20/querylens';
     .links {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
     }
     .link {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       height: 34px;
-      padding: 0 12px;
-      border-radius: var(--r-btn);
+      padding: 0 14px;
+      border-radius: var(--r-pill);
       font-size: var(--text-14);
       color: var(--text-soft);
       text-decoration: none;
     }
     .link:hover {
       color: var(--text);
-      background: var(--surface);
+      background: var(--surface-hi);
+    }
+    .links .btn {
+      border-radius: var(--r-pill);
     }
     @media (max-width: 480px) {
-      .nav { padding: 14px 16px; }
+      .nav { gap: 8px; padding-left: 10px; }
+      .brand span { display: none; }
+      .link { padding: 0 10px; }
       .link span { display: none; }
       .link:first-child span { display: inline; }
     }
