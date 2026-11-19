@@ -186,3 +186,29 @@
   flex: 1;
   min-height: 0;
 }
+
+.start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-14);
+}
+
+.start h1 {
+  font-size: var(--text-28);
+  max-width: 22ch;
+  letter-spacing: -0.025em;
+}
+
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}

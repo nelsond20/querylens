@@ -1,48 +1,84 @@
-<div class="table-wrapper" #tableWrapper>
-  <div class="table-header">
-    <div class="table-meta">
-      <span class="result-count">{{ rows().length }} visible rows</span>
-      <span class="result-subtext">from {{ store.resultCount() }} query results</span>
-    </div>
-
-    <div class="table-tools">
-      <input
-        class="search-input"
-        type="search"
-        placeholder="Search in current results..."
-        [value]="searchTerm()"
-        (input)="onSearch($event)"
-      />
-      <button class="btn-export" (click)="exportCsv()" [disabled]="rows().length === 0">CSV</button>
-      <button class="btn-export" (click)="exportJson()" [disabled]="rows().length === 0">JSON</button>
+<div class="table-card" #tableWrapper>
+  <div class="toolbar">
+    <p class="count">
+      <strong class="num">{{ rows().length.toLocaleString('en-US') }}</strong>
+      {{ rows().length === 1 ? 'row' : 'rows' }}
+      @if (searchTerm().trim() && rows().length !== store.displayedResults().length) {
+        <span class="of">of {{ store.displayedResults().length.toLocaleString('en-US') }}</span>
+      }
+    </p>
+    <div class="tools">
+      <label class="search">
+        <ql-icon name="search" [size]="14" />
+        <span class="visually-hidden">Search in these results</span>
+        <input type="search" placeholder="Search in these results" [value]="searchTerm()" (input)="onSearch($event)" />
+      </label>
+      <button type="button" class="btn btn--quiet btn--sm" (click)="exportCsv()" [disabled]="rows().length === 0" title="Download the visible rows as CSV">
+        <ql-icon name="download" [size]="14" /> CSV
+      </button>
+      <button type="button" class="btn btn--quiet btn--sm" (click)="exportJson()" [disabled]="rows().length === 0" title="Download the visible rows as JSON">
+        <ql-icon name="download" [size]="14" /> JSON
+      </button>
     </div>
   </div>
 
   @if (rows().length === 0) {
-    <div class="empty-state">
-      <h3>No rows to display yet</h3>
-      <p>Run a query or launch a preset from the Scenario Lab to populate this workspace.</p>
+    <div class="empty">
+      @if (!hasRun()) {
+        <p class="empty-title">No results yet</p>
+        <p>Run the query to see rows here.</p>
+      } @else if (searchTerm().trim()) {
+        <p class="empty-title">Nothing matches “{{ searchTerm().trim() }}”</p>
+        <button type="button" class="btn btn--ghost btn--sm" (click)="clearSearch()">Clear search</button>
+      } @else {
+        <p class="empty-title">No rows match these filters</p>
+        <p>Loosen a condition, or start again from every row.</p>
+        <button type="button" class="btn btn--ghost btn--sm" (click)="clearFilters()">Clear filters</button>
+      }
     </div>
   } @else {
-    <div class="table-container" [style.--col-count]="columns.length">
-      <div class="grid-head">
-        @for (column of columns; track column) {
-          <button class="head-cell" (click)="setSort(column)">
-            <span>{{ columnLabels[column] }}</span>
-            @if (sortField() === column) {
-              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
-            }
-          </button>
-        }
-      </div>
-
-      <cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="viewport">
-        <div class="data-row" *cdkVirtualFor="let row of rows(); trackBy: trackByIndex">
+    <div class="scroller">
+      <div class="grid" [style.--col-count]="columns.length">
+        <div class="head" role="row">
           @for (column of columns; track column) {
-            <div class="data-cell">{{ row[column] }}</div>
+            <button
+              type="button"
+              class="head-cell"
+              role="columnheader"
+              [class.numeric]="columnKinds()[column] === 'number'"
+              [class.sorted]="sortField() === column"
+              [attr.aria-sort]="sortField() === column ? (sortDirection() === 'asc' ? 'ascending' : 'descending') : 'none'"
+              (click)="setSort(column)"
+            >
+              <span>{{ columnLabels[column] }}</span>
+              @if (sortField() === column) {
+                <ql-icon [name]="sortDirection() === 'asc' ? 'sort-asc' : 'sort-desc'" [size]="12" />
+              }
+            </button>
           }
         </div>
-      </cdk-virtual-scroll-viewport>
+
+        <cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="viewport">
+          <div class="row" role="row" *cdkVirtualFor="let row of rows(); trackBy: trackByIndex">
+            @for (column of columns; track column) {
+              @switch (columnKinds()[column]) {
+                @case ('number') {
+                  <div class="cell numeric" role="cell">{{ display(row, column) }}</div>
+                }
+                @case ('date') {
+                  <div class="cell" role="cell" [title]="row[column] ?? ''">{{ display(row, column) }}</div>
+                }
+                @case ('category') {
+                  <div class="cell" role="cell"><span class="chip">{{ display(row, column) }}</span></div>
+                }
+                @default {
+                  <div class="cell" role="cell">{{ display(row, column) }}</div>
+                }
+              }
+            }
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
     </div>
   }
 </div>

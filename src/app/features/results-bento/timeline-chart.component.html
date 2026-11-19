@@ -1,0 +1,41 @@
+<div class="head">
+  <h3>Rows per {{ unitLabel() }}</h3>
+  @if (active(); as bucket) {
+    <span class="readout num"><strong>{{ bucket.label }}</strong> {{ bucket.matched }} of {{ bucket.total }}</span>
+  } @else {
+    <span class="legend">
+      <span class="key key--result">Result</span>
+      <span class="key key--all">All rows, scaled to fit</span>
+    </span>
+  }
+</div>
+
+<div
+  class="plot"
+  tabindex="0"
+  role="img"
+  [attr.aria-label]="summary() + ' Use the left and right arrow keys to read each ' + unitLabel() + '.'"
+  (pointermove)="onPointer($event)"
+  (pointerdown)="onPointer($event)"
+  (pointerleave)="scrub.set(null)"
+  (keydown)="onKey($event)"
+  (blur)="scrub.set(null)"
+>
+  <svg [attr.viewBox]="viewBox" preserveAspectRatio="none" aria-hidden="true">
+    <polyline class="all" [attr.points]="totalLine()" vector-effect="non-scaling-stroke" />
+    <polygon class="area" [attr.points]="matchedArea()" />
+    <polyline class="result" [attr.points]="matchedLine()" vector-effect="non-scaling-stroke" />
+  </svg>
+  @if (guideLeft() !== null) {
+    <span class="guide" [style.left.%]="guideLeft()"></span>
+  }
+</div>
+
+<div class="axis" aria-hidden="true">
+  <span>{{ buckets()[0]?.label }}</span>
+  <span>{{ buckets()[buckets().length - 1]?.label }}</span>
+</div>
+
+@if (active(); as bucket) {
+  <span class="visually-hidden" aria-live="polite">{{ bucket.label }}: {{ bucket.matched }} of {{ bucket.total }} rows</span>
+}

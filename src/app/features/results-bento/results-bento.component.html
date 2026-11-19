@@ -1,0 +1,35 @@
+<header class="context">
+  <div class="titles">
+    <h1>{{ title() }}</h1>
+    @if (transformChip(); as chip) {
+      <span class="chip chip--transform">{{ chip }}</span>
+    }
+  </div>
+  <p class="subtitle">{{ subtitle() }}</p>
+</header>
+
+<div class="bento" [class.busy]="store.isExecuting()">
+  <div class="metrics" role="group" aria-label="Query metrics">
+    <app-metric-tile label="Rows scanned" [value]="hasRun() ? store.scannedRows() : null" />
+    <app-metric-tile label="Rows returned" stage="filter" [value]="hasRun() ? store.resultCount() : null" />
+    <app-metric-tile label="Match rate" stage="filter" suffix="%" [value]="hasRun() ? store.matchRate() : null" />
+    <app-metric-tile
+      label="Execution"
+      suffix="ms"
+      [value]="store.lastExecutionMs()"
+      [sub]="hasRun() ? execSub() : ''"
+    />
+  </div>
+  <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
+
+  @if (timeline() || breakdown()) {
+    <div class="charts" [class.single]="!timeline() || !breakdown()">
+      @if (timeline(); as t) {
+        <app-timeline-chart class="tile timeline" [timeline]="t" />
+      }
+      @if (breakdown(); as b) {
+        <app-breakdown-treemap class="tile breakdown" [breakdown]="b" [labels]="labels()" (fieldChange)="chooseField($event)" />
+      }
+    </div>
+  }
+</div>

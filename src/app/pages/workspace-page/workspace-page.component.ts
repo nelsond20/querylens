@@ -9,6 +9,7 @@ import { HistoryPanelComponent } from '../../features/history/history-panel.comp
 import { DatasetSelectorComponent } from '../../features/query-builder/dataset-selector.component';
 import { QueryBuilderComponent } from '../../features/query-builder/query-builder.component';
 import { QueryEditorComponent } from '../../features/query-editor/query-editor.component';
+import { ResultsBentoComponent } from '../../features/results-bento/results-bento.component';
 import { ResultsTableComponent } from '../../features/results-table/results-table.component';
 import { ScenarioListComponent } from '../../features/scenarios/scenario-list.component';
 import { ScenarioRunnerService } from '../../features/scenarios/scenario-runner.service';
@@ -49,6 +50,7 @@ const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
     QlSegmentedComponent,
     QueryBuilderComponent,
     QueryEditorComponent,
+    ResultsBentoComponent,
     ResultsTableComponent,
     ScenarioListComponent,
     TransformPanelComponent,
