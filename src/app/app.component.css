@@ -8,6 +8,10 @@
   overflow: hidden;
 }
 
+.app-shell .shell-main {
+  height: 100%;
+}
+
 .marketing-shell {
   min-height: 100vh;
   min-height: 100dvh;

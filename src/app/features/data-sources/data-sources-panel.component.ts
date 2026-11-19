@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Dataset } from '../../core/datasets/dataset.model';
 import { RuntimeDatasetService } from '../../core/datasets/runtime-dataset.service';
 import { QueryStore } from '../../store/query.store';
 import { ToastService } from '../../shared/ui/ql-toast/toast.service';
@@ -44,11 +45,7 @@ export class DataSourcesPanelComponent {
 
     try {
       const dataset = await this.runtimeDatasetService.createFromFile(file);
-      this.store.addCustomDataset(dataset);
-      this.store.setDataset(dataset.id);
-      this.store.executeQuery();
-      this.successMessage.set(`Imported ${dataset.rows.length} rows from ${file.name}`);
-      this.toast.show('Dataset imported');
+      this.useDataset(dataset, `Imported ${dataset.rows.length.toLocaleString('en-US')} rows from ${file.name}`);
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'File import failed');
     } finally {
@@ -74,15 +71,31 @@ export class DataSourcesPanelComponent {
         bearerToken: this.apiBearerToken().trim(),
         headersJson: this.apiHeadersJson().trim(),
       });
-      this.store.addCustomDataset(dataset);
-      this.store.setDataset(dataset.id);
-      this.store.executeQuery();
-      this.successMessage.set(`Fetched ${dataset.rows.length} rows from API`);
-      this.toast.show('Dataset imported');
+      this.useDataset(dataset, `Fetched ${dataset.rows.length.toLocaleString('en-US')} rows from the API`);
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'API request failed');
     } finally {
       this.loadingApi.set(false);
+    }
+  }
+
+  /** Adds, selects and runs the dataset. If the browser can't store it (quota, private mode) it still works for this session. */
+  private useDataset(dataset: Dataset, summary: string): void {
+    let persisted = true;
+    try {
+      this.store.addCustomDataset(dataset);
+    } catch {
+      // The store updates its state before writing to localStorage, so the dataset is already listed.
+      persisted = false;
+    }
+    this.store.setDataset(dataset.id);
+    this.store.executeQuery();
+    if (persisted) {
+      this.successMessage.set(summary);
+      this.toast.show('Dataset imported');
+    } else {
+      this.successMessage.set(`${summary}. It's too large to keep in this browser, so it's available until you reload.`);
+      this.toast.show('Imported for this session only');
     }
   }
 

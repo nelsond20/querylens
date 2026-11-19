@@ -1,15 +1,13 @@
-@if (shell() === 'app') {
-  <div class="app-shell">
-    <router-outlet />
-  </div>
-} @else {
-  <div class="marketing-shell">
+<div class="shell" [class.app-shell]="shell() === 'app'" [class.marketing-shell]="shell() === 'marketing'">
+  @if (shell() === 'marketing') {
     <ql-marketing-nav />
-    <main class="marketing-main">
-      <router-outlet />
-    </main>
+  }
+  <main class="shell-main" [class.marketing-main]="shell() === 'marketing'">
+    <router-outlet />
+  </main>
+  @if (shell() === 'marketing') {
     <ql-marketing-footer />
-  </div>
-}
+  }
+</div>
 
 <ql-toast />

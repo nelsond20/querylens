@@ -28,7 +28,14 @@
   (detach)="open.set(false)"
   (overlayKeydown)="$event.key === 'Escape' && open.set(false)"
 >
-  <div class="menu" role="menu">
+  <div
+    class="menu"
+    role="menu"
+    aria-label="Datasets"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown)="onMenuKeydown($event)"
+  >
     @for (group of groups(); track group.label) {
       <div class="group" role="group" [attr.aria-label]="group.label">
         <p class="group-label">{{ group.label }}</p>
@@ -39,6 +46,7 @@
             class="option"
             [class.on]="dataset.id === current().id"
             [attr.aria-checked]="dataset.id === current().id"
+            [attr.cdkFocusInitial]="dataset.id === current().id ? '' : null"
             (click)="select(dataset.id)"
           >
             <span class="opt-name">{{ dataset.name }}</span>

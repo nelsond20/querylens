@@ -1,5 +1,5 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, Component, DestroyRef, afterRenderEffect, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, afterRenderEffect, computed, effect, inject, signal } from '@angular/core';
 import { OnboardingService, TOUR_LENGTH } from './onboarding.service';
 
 interface TourStep {
@@ -161,8 +161,22 @@ export class TourComponent {
       this.onboarding.tourStep();
       this.measure();
     });
-    const timer = setInterval(() => this.onboarding.tourStep() !== null && this.measure(), 400);
-    inject(DestroyRef).onDestroy(() => clearInterval(timer));
+    // While the tour is open, keep following layout shifts (panels animating in). Closed: no timer at all.
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const stop = () => {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    effect(() => {
+      if (this.onboarding.tourStep() === null) {
+        stop();
+      } else if (timer === null) {
+        timer = setInterval(() => this.measure(), 400);
+      }
+    });
+    inject(DestroyRef).onDestroy(stop);
   }
 
   protected measure(): void {
