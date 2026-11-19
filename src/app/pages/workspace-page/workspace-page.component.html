@@ -81,6 +81,9 @@
   }
 
   <main class="main" aria-label="Results">
+    @if (!onboarding.stripDismissed()) {
+      <app-orientation-strip />
+    }
     <div class="tabs" role="tablist" aria-label="Results view">
       <button
         type="button"
@@ -128,6 +131,8 @@
     }
   </main>
 </div>
+
+<app-tour />
 
 @if (palette.isOpen()) {
   <ql-command-palette />
