@@ -16,6 +16,7 @@ import { eligibleCategoryFields } from '../../core/insights/bento-data';
 import { formatDateValue } from '../../core/insights/format';
 import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 import { QueryStore } from '../../store/query.store';
+import { ExportService } from './export.service';
 
 type ColumnKind = 'number' | 'date' | 'category' | 'text';
 
@@ -34,6 +35,7 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   protected readonly sortField = signal('');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
   private resizeObserver: ResizeObserver | null = null;
+  private readonly unregisterExport = inject(ExportService).register(this);
 
   @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
   @ViewChild('tableWrapper') private tableWrapper?: ElementRef<HTMLElement>;
@@ -193,6 +195,7 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.unregisterExport();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
   }
