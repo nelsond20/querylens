@@ -185,7 +185,7 @@
   --error:        #ff7a72;
   --error-wash:   #3a1d1c;
 
-  --shadow-tile:  none;
+  --shadow-tile:  0 0 0 transparent;
   --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 

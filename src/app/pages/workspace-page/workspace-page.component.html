@@ -107,9 +107,22 @@
     </div>
 
     @if (ui.mainTab() === 'results') {
-      <section class="results" data-tour="bento">
-        <app-results-table class="table" />
-      </section>
+      @if (store.lastExecutionMs() === null && !store.isExecuting()) {
+        <section class="start">
+          <h1>Build a filter and run it, or pick a scenario</h1>
+          <p>Press <span class="kbd">{{ modKey }} ↵</span> to run whatever is in the Query panel.</p>
+          <div class="start-actions">
+            @for (scenario of runner.scenarios; track scenario.id) {
+              <button type="button" class="btn btn--ghost" (click)="runner.run(scenario.id)">{{ scenario.title }}</button>
+            }
+          </div>
+        </section>
+      } @else {
+        <section class="results">
+          <app-results-bento data-tour="bento" />
+          <app-results-table class="table" />
+        </section>
+      }
     } @else {
       <app-diff-view />
     }
