@@ -1,202 +1,153 @@
-.data-sources {
+.sources {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-.section-head {
-  display: flex;
-  flex-direction: column;
-}
-
-.title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-}
-
-.title {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semi);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-soft);
-}
-
-.title-row:hover .title {
-  color: var(--text);
-}
-
-.chevron {
-  display: block;
-  width: 7px;
-  height: 7px;
-  border-right: 1.5px solid var(--text-muted);
-  border-bottom: 1.5px solid var(--text-muted);
-  transform: rotate(45deg) translate(-1px, -2px);
-  flex-shrink: 0;
-  transition: transform var(--dur-base) var(--ease-expo),
-              border-color var(--dur-fast) var(--ease-expo);
-}
-
-.chevron.is-open {
-  transform: rotate(-135deg) translate(-1px, 2px);
-}
-
-.title-row:hover .chevron {
-  border-color: var(--text);
+  gap: 22px;
 }
 
 .block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
-.block-title {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.block + .block {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
 }
 
-.file-input {
-  background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: var(--r-md);
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  padding: var(--space-3);
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-expo),
-              color var(--dur-fast) var(--ease-expo);
-}
-
-.file-input:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-
-.file-input input {
-  display: none;
-}
-
-.input,
-.textarea {
-  background: var(--surface);
-  border: 1px solid var(--border-sub);
-  border-radius: var(--r-md);
-  color: var(--text);
-  font-size: var(--text-sm);
-  padding: var(--space-2) var(--space-3);
-  width: 100%;
-  transition: border-color var(--dur-fast) var(--ease-expo);
-}
-
-.input::placeholder,
-.textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.input:focus,
-.textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.textarea {
-  font-family: var(--font-mono);
-  resize: vertical;
-}
-
-.btn-fetch {
-  border: none;
-  border-radius: var(--r-md);
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: var(--text-sm);
+h3 {
+  font-family: var(--font-ui);
+  font-size: var(--text-13);
   font-weight: var(--weight-semi);
-  padding: var(--space-2) var(--space-4);
+  letter-spacing: 0;
+}
+
+.explain {
+  font-size: var(--text-12);
+  color: var(--text-muted);
+}
+
+.drop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 64px;
+  border-radius: var(--r-cond);
+  border: 1px dashed var(--border);
+  background: var(--surface);
+  font-size: var(--text-13);
+  font-weight: var(--weight-medium);
+  color: var(--stage-filter-text);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease-expo),
-              transform var(--dur-fast) var(--ease-expo);
 }
 
-.btn-fetch:hover:not(:disabled) {
-  background: var(--accent-hi);
-  transform: translateY(-1px);
+.drop:hover,
+.drop:focus-within {
+  border-color: var(--stage-filter);
+  background: var(--stage-filter-wash);
 }
 
-.btn-fetch:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.drop.busy {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.drop input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optional {
+  color: var(--text-muted);
+  font-weight: var(--weight-normal);
+}
+
+.advanced summary {
+  font-size: var(--text-12);
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.advanced[open] summary {
+  margin-bottom: 10px;
+}
+
+.form .btn {
+  align-self: flex-start;
 }
 
 .message {
-  font-size: var(--text-xs);
+  font-size: var(--text-12);
+  padding: 8px 12px;
+  border-radius: var(--r-input);
 }
 
-.error   { color: var(--error);   }
-.success { color: var(--success); }
-.empty   { font-size: var(--text-xs); color: var(--text-muted); }
+.error {
+  color: var(--error);
+  background: var(--error-wash);
+}
 
-.dataset-list {
+.success {
+  color: var(--success);
+  background: var(--success-wash);
+}
+
+.list {
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
-.dataset-item {
+.item {
   display: flex;
-  gap: var(--space-2);
-}
-
-.dataset-select {
-  flex: 1;
-  border: 1px solid var(--border-sub);
-  border-radius: var(--r-md);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-sm);
-  text-align: left;
-  padding: var(--space-2) var(--space-3);
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-expo);
+  border-radius: var(--r-cond);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
-.dataset-select:hover {
-  border-color: var(--border);
+.item.on {
+  border-color: var(--stage-filter);
 }
 
-.dataset-select small {
+.pick {
+  display: grid;
+  flex: 1;
+  text-align: left;
+  padding: 8px 12px;
+}
+
+.name {
+  font-size: var(--text-13);
+  font-weight: var(--weight-medium);
+}
+
+.meta {
+  font-size: var(--text-11);
   color: var(--text-muted);
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
 }
 
-.dataset-remove {
-  border: 1px solid color-mix(in oklch, var(--error) 30%, var(--border-sub));
-  border-radius: var(--r-md);
-  background: color-mix(in oklch, var(--error) 8%, var(--surface));
+.remove {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+}
+
+.remove:hover {
   color: var(--error);
-  font-size: var(--text-xs);
-  padding: var(--space-2) var(--space-3);
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity var(--dur-fast) var(--ease-expo);
-}
-
-.dataset-remove:hover {
-  opacity: 1;
+  background: var(--error-wash);
 }

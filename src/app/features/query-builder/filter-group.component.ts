@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 import { FieldDefinition } from '../../core/datasets/field-definition.model';
 import { FilterCondition, FilterGroup, FilterNode } from '../../core/query-engine/filter-node.model';
 import { FilterConditionComponent } from './filter-condition.component';
@@ -7,7 +8,7 @@ import { FilterConditionComponent } from './filter-condition.component';
 @Component({
   selector: 'app-filter-group',
   standalone: true,
-  imports: [CommonModule, FilterConditionComponent, forwardRef(() => FilterGroupComponent)],
+  imports: [CommonModule, FilterConditionComponent, forwardRef(() => FilterGroupComponent), QlIconComponent],
   templateUrl: './filter-group.component.html',
   styleUrl: './filter-group.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

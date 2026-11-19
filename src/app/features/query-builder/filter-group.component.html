@@ -1,39 +1,55 @@
 <div class="group" [class.nested]="depth > 0">
   <div class="group-header">
-    <button class="btn-op" (click)="toggleOp()" [title]="'Toggle to ' + (group.op === 'AND' ? 'OR' : 'AND')">
-      <span class="op-label">{{ group.op }}</span>
+    <button
+      type="button"
+      class="op"
+      (click)="toggleOp()"
+      [attr.aria-label]="'Match ' + (group.op === 'AND' ? 'all' : 'any') + ' conditions. Switch to ' + (group.op === 'AND' ? 'OR' : 'AND')"
+      [title]="'Switch to ' + (group.op === 'AND' ? 'OR' : 'AND')"
+    >
+      <span [class.on]="group.op === 'AND'">AND</span>
+      <span [class.on]="group.op === 'OR'">OR</span>
     </button>
-    <span class="group-label">logic group</span>
+    <span class="group-hint">{{ group.op === 'AND' ? 'Rows must match all' : 'Rows can match any' }}</span>
     @if (depth > 0) {
-      <button class="btn-remove-group" (click)="remove.emit()" title="Remove group" aria-label="Remove group">×</button>
+      <button type="button" class="remove" (click)="remove.emit()" aria-label="Remove group" title="Remove group">
+        <ql-icon name="x" [size]="14" />
+      </button>
     }
   </div>
 
-  <div class="group-children">
-    @for (child of group.children; track $index) {
-      @if (isCondition(child)) {
-        <app-filter-condition
-          [condition]="child"
-          [fields]="fields"
-          (conditionChange)="updateChild($index, $event)"
-          (remove)="removeChild($index)"
-        />
+  @if (group.children.length > 0) {
+    <div class="children">
+      @for (child of group.children; track $index) {
+        @if (isCondition(child)) {
+          <app-filter-condition
+            [condition]="child"
+            [fields]="fields"
+            (conditionChange)="updateChild($index, $event)"
+            (remove)="removeChild($index)"
+          />
+        }
+        @if (isGroup(child)) {
+          <app-filter-group
+            [group]="child"
+            [fields]="fields"
+            [depth]="depth + 1"
+            (groupChange)="updateChild($index, $event)"
+            (remove)="removeChild($index)"
+          />
+        }
       }
+    </div>
+  } @else if (depth === 0) {
+    <p class="empty">No filters yet, so every row is returned.</p>
+  }
 
-      @if (isGroup(child)) {
-        <app-filter-group
-          [group]="child"
-          [fields]="fields"
-          [depth]="depth + 1"
-          (groupChange)="updateChild($index, $event)"
-          (remove)="removeChild($index)"
-        />
-      }
-    }
-  </div>
-
-  <div class="group-actions">
-    <button class="btn-add" (click)="addCondition()">+ condition</button>
-    <button class="btn-add" (click)="addGroup()">+ group</button>
+  <div class="actions">
+    <button type="button" class="btn btn--quiet btn--sm add" (click)="addCondition()">
+      <ql-icon name="plus" [size]="14" /> Condition
+    </button>
+    <button type="button" class="btn btn--quiet btn--sm add" (click)="addGroup()">
+      <ql-icon name="plus" [size]="14" /> Group
+    </button>
   </div>
 </div>

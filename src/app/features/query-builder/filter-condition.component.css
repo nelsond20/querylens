@@ -1,75 +1,40 @@
+:host {
+  display: block;
+}
+
 .condition {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 24px;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: 6px;
+  padding: 8px 8px 8px 11px;
+  border-radius: var(--r-cond);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--stage-filter);
   background: var(--surface);
-  border: 1px solid var(--border-sub);
-  border-radius: var(--r-md);
-  overflow: hidden;
 }
 
-.condition ql-select {
-  flex: 1 1 140px;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.input {
-  background: var(--bg);
-  border: 1px solid var(--border-sub);
-  border-radius: var(--r-sm);
-  color: var(--text);
-  padding: 3px var(--space-2);
-  font-size: var(--text-sm);
-  transition: border-color var(--dur-fast) var(--ease-expo);
-  width: auto;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.input {
-  flex: 2 1 180px;
-  min-width: 120px;
-  width: 100%;
-  max-width: 100%;
+.value {
+  grid-column: 1 / -1;
+  height: 32px;
 }
 
 .operator-fixed {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  height: 30px;
-  padding: 0 var(--space-2);
-  border: 1px solid var(--border-sub);
+  font-size: var(--text-13);
+  color: var(--text-muted);
+  padding-left: 8px;
+}
+
+.remove {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
   border-radius: var(--r-sm);
-  background: var(--surface);
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semi);
-  flex: 0 0 38px;
+  color: var(--text-muted);
 }
 
-
-.btn-remove {
-  background: none;
-  border: none;
+.remove:hover {
   color: var(--error);
-  cursor: pointer;
-  font-size: var(--text-md);
-  line-height: 1;
-  padding: 0;
-  flex-shrink: 0;
-  margin-left: auto;
-  opacity: 0.6;
-  transition: opacity var(--dur-fast) var(--ease-expo);
-}
-
-.btn-remove:hover {
-  opacity: 1;
+  background: var(--error-wash);
 }
