@@ -6,11 +6,12 @@ import { ShellKind } from './app.routes';
 import { ThemeService } from './core/theme.service';
 import { MarketingFooterComponent } from './shared/layout/marketing-footer.component';
 import { MarketingNavComponent } from './shared/layout/marketing-nav.component';
+import { QlToastComponent } from './shared/ui/ql-toast/ql-toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MarketingNavComponent, MarketingFooterComponent],
+  imports: [RouterOutlet, MarketingNavComponent, MarketingFooterComponent, QlToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,7 @@ import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 import { HistoryEntry } from '../../store/history-entry.model';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
+import { ToastService } from '../../shared/ui/ql-toast/toast.service';
 
 @Component({
   selector: 'app-history-panel',
@@ -17,6 +18,7 @@ export class HistoryPanelComponent {
   protected readonly historyStore = inject(HistoryStore);
   protected readonly queryStore = inject(QueryStore);
   protected readonly saveName = signal('');
+  private readonly toast = inject(ToastService);
 
   protected save(): void {
     const name = this.saveName().trim();
@@ -35,6 +37,7 @@ export class HistoryPanelComponent {
 
     this.historyStore.saveEntry(entry);
     this.saveName.set('');
+    this.toast.show('Snapshot saved');
   }
 
   protected load(id: string): void {

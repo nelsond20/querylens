@@ -4,7 +4,7 @@
   <header class="top">
     <app-dataset-selector />
 
-    <button type="button" class="palette-trigger" data-palette-trigger>
+    <button type="button" class="palette-trigger" (click)="palette.show()" aria-haspopup="dialog">
       <ql-icon name="search" [size]="14" />
       <span class="palette-label">Search actions, scenarios, datasets…</span>
       <span class="kbd">{{ modKey }} K</span>
@@ -15,7 +15,7 @@
         type="button"
         class="btn btn--quiet btn--icon"
         data-tour="share"
-        data-copy-link
+        (click)="share.copyLink()"
         aria-label="Copy share link"
         title="Copy a link to this exact query"
       >
@@ -128,3 +128,7 @@
     }
   </main>
 </div>
+
+@if (palette.isOpen()) {
+  <ql-command-palette />
+}

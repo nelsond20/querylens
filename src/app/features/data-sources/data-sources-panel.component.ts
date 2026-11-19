@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { RuntimeDatasetService } from '../../core/datasets/runtime-dataset.service';
 import { QueryStore } from '../../store/query.store';
+import { ToastService } from '../../shared/ui/ql-toast/toast.service';
 
 import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 
@@ -17,6 +18,7 @@ import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 export class DataSourcesPanelComponent {
   protected readonly store = inject(QueryStore);
   private readonly runtimeDatasetService = inject(RuntimeDatasetService);
+  private readonly toast = inject(ToastService);
 
   protected readonly apiUrl = signal('');
   protected readonly apiName = signal('');
@@ -46,6 +48,7 @@ export class DataSourcesPanelComponent {
       this.store.setDataset(dataset.id);
       this.store.executeQuery();
       this.successMessage.set(`Imported ${dataset.rows.length} rows from ${file.name}`);
+      this.toast.show('Dataset imported');
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'File import failed');
     } finally {
@@ -75,6 +78,7 @@ export class DataSourcesPanelComponent {
       this.store.setDataset(dataset.id);
       this.store.executeQuery();
       this.successMessage.set(`Fetched ${dataset.rows.length} rows from API`);
+      this.toast.show('Dataset imported');
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'API request failed');
     } finally {

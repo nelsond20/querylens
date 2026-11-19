@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { isTypingTarget } from '../../core/keyboard';
 import { deserialize } from '../../core/serialization/query-serializer';
 import { DataSourcesPanelComponent } from '../../features/data-sources/data-sources-panel.component';
 import { DiffControlsComponent } from '../../features/diff/diff-controls.component';
@@ -13,6 +14,10 @@ import { ResultsBentoComponent } from '../../features/results-bento/results-bent
 import { ResultsTableComponent } from '../../features/results-table/results-table.component';
 import { ScenarioListComponent } from '../../features/scenarios/scenario-list.component';
 import { ScenarioRunnerService } from '../../features/scenarios/scenario-runner.service';
+import { ShareService } from '../../features/share/share.service';
+import { CommandPaletteComponent } from '../../shared/ui/ql-command-palette/command-palette.component';
+import { CommandRegistryService } from '../../shared/ui/ql-command-palette/command-registry.service';
+import { ToastService } from '../../shared/ui/ql-toast/toast.service';
 import { TransformPanelComponent } from '../../features/transformations/transform-panel.component';
 import { AppRailComponent } from '../../shared/layout/app-rail.component';
 import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
@@ -41,6 +46,7 @@ const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
   standalone: true,
   imports: [
     AppRailComponent,
+    CommandPaletteComponent,
     DataSourcesPanelComponent,
     DatasetSelectorComponent,
     DiffControlsComponent,
@@ -58,6 +64,7 @@ const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
   templateUrl: './workspace-page.component.html',
   styleUrl: './workspace-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class WorkspacePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -66,6 +73,9 @@ export class WorkspacePageComponent implements OnInit {
   protected readonly store = inject(QueryStore);
   protected readonly ui = inject(WorkspaceUiService);
   protected readonly runner = inject(ScenarioRunnerService);
+  protected readonly palette = inject(CommandRegistryService);
+  protected readonly share = inject(ShareService);
+  private readonly toast = inject(ToastService);
 
   protected readonly editorMode = signal<'visual' | 'json'>('visual');
   protected readonly editorOptions: SegmentedOption[] = [
@@ -73,7 +83,7 @@ export class WorkspacePageComponent implements OnInit {
     { value: 'json', label: 'JSON' },
   ];
   protected readonly panelCopy = computed(() => PANEL_COPY[this.ui.activePanel()]);
-  protected readonly modKey = /Mac|iPhone|iPad/.test(globalThis.navigator?.userAgent ?? '') ? '⌘' : 'Ctrl';
+  protected readonly modKey = this.palette.modKey;
 
   private readonly hydratedQueryToken = signal<string | null>(null);
 
@@ -89,7 +99,11 @@ export class WorkspacePageComponent implements OnInit {
       }
 
       const parsed = deserialize(queryParam);
-      if (!parsed || !this.store.hasDataset(parsed.datasetId)) {
+      if (!parsed) {
+        return;
+      }
+      if (!this.store.hasDataset(parsed.datasetId)) {
+        this.toast.show("That link uses a dataset that isn't in this browser");
         return;
       }
 
@@ -113,8 +127,27 @@ export class WorkspacePageComponent implements OnInit {
   }
 
   protected run(): void {
-    if (!this.store.rawQueryError()) {
-      this.store.executeQuery();
+    this.palette.runQuery();
+  }
+
+  protected onKeydown(event: KeyboardEvent): void {
+    const mod = event.metaKey || event.ctrlKey;
+    if (mod && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.palette.toggle();
+      return;
+    }
+    if (mod && event.key === 'Enter') {
+      event.preventDefault();
+      this.palette.runQuery();
+      return;
+    }
+    if (this.palette.isOpen() || mod || event.altKey) {
+      return;
+    }
+    if (event.key === '[' && !isTypingTarget(event.target as HTMLElement | null)) {
+      event.preventDefault();
+      this.ui.togglePanel();
     }
   }
 
