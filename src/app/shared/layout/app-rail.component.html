@@ -1,0 +1,54 @@
+<nav class="rail" aria-label="Workspace">
+  <a class="logo" routerLink="/landing" aria-label="QueryLens home" title="QueryLens home">
+    <ql-logo [size]="28" />
+    <span class="label brand">QueryLens</span>
+  </a>
+
+  <div class="group">
+    @for (entry of entries; track entry.id) {
+      <button
+        type="button"
+        class="item"
+        [class.active]="isActive(entry.id)"
+        [attr.data-stage]="entry.stage"
+        [attr.aria-pressed]="isActive(entry.id)"
+        [attr.aria-label]="entry.label + ': ' + entry.hint"
+        [title]="ui.railExpanded() ? '' : entry.label + ' · ' + entry.hint"
+        (click)="pick(entry.id)"
+      >
+        <ql-icon [name]="entry.icon" [size]="18" />
+        <span class="label">
+          <span class="label-main">{{ entry.label }}</span>
+          <span class="label-hint">{{ entry.hint }}</span>
+        </span>
+      </button>
+    }
+  </div>
+
+  <div class="group bottom">
+    <button
+      type="button"
+      class="item"
+      (click)="theme.toggle()"
+      [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      [title]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+    >
+      <ql-icon [name]="theme.isDark() ? 'sun' : 'moon'" [size]="18" />
+      <span class="label"><span class="label-main">{{ theme.isDark() ? 'Light theme' : 'Dark theme' }}</span></span>
+    </button>
+    <a
+      class="item"
+      routerLink="/settings"
+      [class.active]="onSettings()"
+      aria-label="Settings"
+      title="Settings"
+    >
+      <ql-icon name="settings" [size]="18" />
+      <span class="label"><span class="label-main">Settings</span></span>
+    </a>
+    <a class="item" routerLink="/privacy" aria-label="Privacy: runs locally, no data leaves your browser" title="Runs locally, no data leaves your browser">
+      <ql-icon name="lock" [size]="18" />
+      <span class="label"><span class="label-main">Runs locally</span></span>
+    </a>
+  </div>
+</nav>

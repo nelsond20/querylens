@@ -1,58 +1,42 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { AppMode, AppModeService } from './core/app-mode.service';
-import { QueryStore } from './store/query.store';
+import { ShellKind } from './app.routes';
 import { ThemeService } from './core/theme.service';
+import { MarketingFooterComponent } from './shared/layout/marketing-footer.component';
+import { MarketingNavComponent } from './shared/layout/marketing-nav.component';
+import { QlToastComponent } from './shared/ui/ql-toast/ql-toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, MarketingNavComponent, MarketingFooterComponent, QlToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
+export class AppComponent {
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
-  protected readonly appMode = inject(AppModeService);
-  private readonly queryStore = inject(QueryStore);
-  protected readonly theme = inject(ThemeService);
-  protected readonly routePulse = signal(0);
+  protected readonly shell = signal<ShellKind>('marketing');
 
-  ngOnInit(): void {
-    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const mode: AppMode = params.get('mode') === 'demo' ? 'demo' : 'live';
-      if (this.appMode.mode() !== mode) {
-        this.queryStore.resetForMode(mode);
-      }
-      this.appMode.setMode(mode);
-    });
+  constructor() {
+    // Instantiated eagerly so the theme attribute is applied before first paint of any route.
+    inject(ThemeService);
 
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef),
+        takeUntilDestroyed(inject(DestroyRef)),
       )
       .subscribe(() => {
-        this.routePulse.update((value) => value + 1);
+        let snapshot = this.route.snapshot;
+        while (snapshot.firstChild) {
+          snapshot = snapshot.firstChild;
+        }
+        this.shell.set((snapshot.data['shell'] as ShellKind | undefined) ?? 'marketing');
       });
-  }
-
-  protected setExperience(mode: AppMode): void {
-    if (this.appMode.mode() !== mode) {
-      this.queryStore.resetForMode(mode);
-    }
-
-    this.appMode.setMode(mode);
-    this.router.navigate(['/workspace'], {
-      queryParams: { mode },
-      queryParamsHandling: 'merge',
-    });
   }
 }

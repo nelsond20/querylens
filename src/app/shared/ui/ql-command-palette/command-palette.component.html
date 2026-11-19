@@ -1,0 +1,64 @@
+<div class="backdrop" (click)="close()"></div>
+<div
+  class="palette"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Command palette"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+  (keydown)="onKeydown($event)"
+>
+  <div class="search">
+    <ql-icon name="search" />
+    <input
+      cdkFocusInitial
+      type="text"
+      placeholder="Type a command, scenario or dataset"
+      aria-label="Search commands"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-list"
+      [attr.aria-activedescendant]="results().length ? 'cmd-' + activeIndex() : null"
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+    />
+    <span class="kbd">Esc</span>
+  </div>
+
+  <div class="list" id="palette-list" role="listbox" #list>
+    @for (g of groups(); track g.group) {
+      <div class="group" role="group" [attr.aria-label]="g.group">
+        <p class="group-label">{{ g.group }}</p>
+        @for (item of g.items; track item.command.id) {
+          <button
+            type="button"
+            role="option"
+            class="item"
+            tabindex="-1"
+            [id]="'cmd-' + item.index"
+            [attr.data-index]="item.index"
+            [class.active]="item.index === activeIndex()"
+            [attr.aria-selected]="item.index === activeIndex()"
+            (mousemove)="activeIndex.set(item.index)"
+            (click)="execute(item.command)"
+          >
+            @if (item.command.icon) {
+              <ql-icon [name]="item.command.icon" class="icon" />
+            }
+            <span class="label">{{ item.command.label }}</span>
+            @if (item.command.shortcut) {
+              <span class="kbd">{{ item.command.shortcut }}</span>
+            }
+          </button>
+        }
+      </div>
+    } @empty {
+      <p class="none">No command matches “{{ query() }}”.</p>
+    }
+  </div>
+
+  <div class="foot">
+    <span><span class="kbd">↑</span> <span class="kbd">↓</span> to move</span>
+    <span><span class="kbd">↵</span> to run</span>
+  </div>
+</div>

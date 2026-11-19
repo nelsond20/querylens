@@ -3,25 +3,25 @@ import { CommonModule } from '@angular/common';
 import { AggregateOp, Transformation } from '../../core/query-engine/transformation.model';
 import { QueryStore } from '../../store/query.store';
 import { QlSelectComponent, SelectOption } from '../../shared/ui/ql-select/ql-select.component';
+import { QlSegmentedComponent, SegmentedOption } from '../../shared/ui/ql-segmented/ql-segmented.component';
 
 @Component({
   selector: 'app-transform-panel',
   standalone: true,
-  imports: [CommonModule, QlSelectComponent],
+  imports: [CommonModule, QlSelectComponent, QlSegmentedComponent],
   templateUrl: './transform-panel.component.html',
   styleUrl: './transform-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransformPanelComponent {
   protected readonly store = inject(QueryStore);
-  protected readonly expanded = signal(true);
 
   protected readonly type = signal<'map' | 'groupBy' | 'sort'>('sort');
 
-  readonly typeOptions: SelectOption[] = [
+  readonly typeOptions: SegmentedOption[] = [
     { value: 'sort', label: 'Sort' },
-    { value: 'map', label: 'Map (select fields)' },
-    { value: 'groupBy', label: 'Group By' },
+    { value: 'map', label: 'Pick fields' },
+    { value: 'groupBy', label: 'Group by' },
   ];
   readonly directionOptions: SelectOption[] = [
     { value: 'asc', label: 'Ascending' },
@@ -47,10 +47,6 @@ export class TransformPanelComponent {
 
   get fieldOptions(): SelectOption[] {
     return this.fields.map((f) => ({ value: f.key, label: f.label }));
-  }
-
-  protected toggle(): void {
-    this.expanded.update((value) => !value);
   }
 
   protected apply(): void {

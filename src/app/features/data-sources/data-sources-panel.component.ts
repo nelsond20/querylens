@@ -1,13 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Dataset } from '../../core/datasets/dataset.model';
 import { RuntimeDatasetService } from '../../core/datasets/runtime-dataset.service';
 import { QueryStore } from '../../store/query.store';
+import { ToastService } from '../../shared/ui/ql-toast/toast.service';
+
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 
 @Component({
   selector: 'app-data-sources-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, QlIconComponent],
   templateUrl: './data-sources-panel.component.html',
   styleUrl: './data-sources-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,7 +19,7 @@ import { QueryStore } from '../../store/query.store';
 export class DataSourcesPanelComponent {
   protected readonly store = inject(QueryStore);
   private readonly runtimeDatasetService = inject(RuntimeDatasetService);
-  protected readonly collapsed = signal(true);
+  private readonly toast = inject(ToastService);
 
   protected readonly apiUrl = signal('');
   protected readonly apiName = signal('');
@@ -41,10 +45,7 @@ export class DataSourcesPanelComponent {
 
     try {
       const dataset = await this.runtimeDatasetService.createFromFile(file);
-      this.store.addCustomDataset(dataset);
-      this.store.setDataset(dataset.id);
-      this.store.executeQuery();
-      this.successMessage.set(`Imported ${dataset.rows.length} rows from ${file.name}`);
+      this.useDataset(dataset, `Imported ${dataset.rows.length.toLocaleString('en-US')} rows from ${file.name}`);
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'File import failed');
     } finally {
@@ -70,10 +71,7 @@ export class DataSourcesPanelComponent {
         bearerToken: this.apiBearerToken().trim(),
         headersJson: this.apiHeadersJson().trim(),
       });
-      this.store.addCustomDataset(dataset);
-      this.store.setDataset(dataset.id);
-      this.store.executeQuery();
-      this.successMessage.set(`Fetched ${dataset.rows.length} rows from API`);
+      this.useDataset(dataset, `Fetched ${dataset.rows.length.toLocaleString('en-US')} rows from the API`);
     } catch (error) {
       this.errorMessage.set(error instanceof Error ? error.message : 'API request failed');
     } finally {
@@ -81,12 +79,28 @@ export class DataSourcesPanelComponent {
     }
   }
 
-  protected removeCustomDataset(id: string): void {
-    this.store.removeCustomDataset(id);
+  /** Adds, selects and runs the dataset. If the browser can't store it (quota, private mode) it still works for this session. */
+  private useDataset(dataset: Dataset, summary: string): void {
+    let persisted = true;
+    try {
+      this.store.addCustomDataset(dataset);
+    } catch {
+      // The store updates its state before writing to localStorage, so the dataset is already listed.
+      persisted = false;
+    }
+    this.store.setDataset(dataset.id);
+    this.store.executeQuery();
+    if (persisted) {
+      this.successMessage.set(summary);
+      this.toast.show('Dataset imported');
+    } else {
+      this.successMessage.set(`${summary}. It's too large to keep in this browser, so it's available until you reload.`);
+      this.toast.show('Imported for this session only');
+    }
   }
 
-  protected toggleCollapsed(): void {
-    this.collapsed.update((value) => !value);
+  protected removeCustomDataset(id: string): void {
+    this.store.removeCustomDataset(id);
   }
 
   protected selectImportedDataset(id: string): void {

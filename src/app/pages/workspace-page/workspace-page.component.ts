@@ -1,154 +1,104 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { AppModeService } from '../../core/app-mode.service';
-import { FilterGroup } from '../../core/query-engine/filter-node.model';
-import { Transformation } from '../../core/query-engine/transformation.model';
+import { isTypingTarget } from '../../core/keyboard';
 import { deserialize } from '../../core/serialization/query-serializer';
 import { DataSourcesPanelComponent } from '../../features/data-sources/data-sources-panel.component';
-import { DiffPanelComponent } from '../../features/diff/diff-panel.component';
+import { DiffControlsComponent } from '../../features/diff/diff-controls.component';
+import { DiffViewComponent } from '../../features/diff/diff-view.component';
+import { OnboardingService } from '../../features/onboarding/onboarding.service';
+import { OrientationStripComponent } from '../../features/onboarding/orientation-strip.component';
+import { TourComponent } from '../../features/onboarding/tour.component';
 import { HistoryPanelComponent } from '../../features/history/history-panel.component';
 import { DatasetSelectorComponent } from '../../features/query-builder/dataset-selector.component';
 import { QueryBuilderComponent } from '../../features/query-builder/query-builder.component';
 import { QueryEditorComponent } from '../../features/query-editor/query-editor.component';
+import { ResultsBentoComponent } from '../../features/results-bento/results-bento.component';
 import { ResultsTableComponent } from '../../features/results-table/results-table.component';
+import { ScenarioListComponent } from '../../features/scenarios/scenario-list.component';
+import { ScenarioRunnerService } from '../../features/scenarios/scenario-runner.service';
+import { ShareService } from '../../features/share/share.service';
+import { CommandPaletteComponent } from '../../shared/ui/ql-command-palette/command-palette.component';
+import { CommandRegistryService } from '../../shared/ui/ql-command-palette/command-registry.service';
+import { ToastService } from '../../shared/ui/ql-toast/toast.service';
 import { TransformPanelComponent } from '../../features/transformations/transform-panel.component';
+import { AppRailComponent } from '../../shared/layout/app-rail.component';
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
+import { QlSegmentedComponent, SegmentedOption } from '../../shared/ui/ql-segmented/ql-segmented.component';
 import { QueryStore } from '../../store/query.store';
-
-interface QueryPreset {
-  id: string;
-  title: string;
-  description: string;
-  datasetId: string;
-  filterTree: FilterGroup;
-  transformation: Transformation | null;
-}
-
-const QUERY_PRESETS: QueryPreset[] = [
-  {
-    id: 'high-value-events',
-    title: 'High-Value Events',
-    description: 'Find purchase events with value above 100 and sort by highest value first.',
-    datasetId: 'events',
-    filterTree: {
-      type: 'group',
-      op: 'AND',
-      children: [
-        { type: 'condition', field: 'type', operator: 'eq', value: 'purchase' },
-        { type: 'condition', field: 'value', operator: 'gt', value: 100 },
-      ],
-    },
-    transformation: { type: 'sort', field: 'value', direction: 'desc' },
-  },
-  {
-    id: 'inactive-editors',
-    title: 'Inactive Editor Accounts',
-    description: 'Surface editor users currently inactive to trigger recovery actions.',
-    datasetId: 'users',
-    filterTree: {
-      type: 'group',
-      op: 'AND',
-      children: [
-        { type: 'condition', field: 'role', operator: 'eq', value: 'editor' },
-        { type: 'condition', field: 'status', operator: 'eq', value: 'inactive' },
-      ],
-    },
-    transformation: { type: 'sort', field: 'createdAt', direction: 'asc' },
-  },
-  {
-    id: 'low-stock-catalog',
-    title: 'Low Stock Watchlist',
-    description: 'Track products with low inventory and prioritize highest-rated items first.',
-    datasetId: 'products',
-    filterTree: {
-      type: 'group',
-      op: 'AND',
-      children: [{ type: 'condition', field: 'stock', operator: 'lt', value: 30 }],
-    },
-    transformation: { type: 'sort', field: 'rating', direction: 'desc' },
-  },
-];
+import { RailItem, WorkspaceUiService } from './workspace-ui.service';
 
 const MAX_SHARED_QUERY_PARAM_LENGTH = 16000;
+
+const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
+  query: { title: 'Query', description: 'Build filters visually or edit them as JSON.' },
+  transform: { title: 'Transform', description: 'Sort, reshape or group the current results.' },
+  history: { title: 'History', description: 'Save the current query as a snapshot and reload it later.' },
+  compare: {
+    title: 'Compare',
+    description: 'See which rows changed between the current result and a saved snapshot.',
+  },
+  sources: {
+    title: 'Your data',
+    description: 'Import a JSON file or fetch records from an API. Data stays in this browser.',
+  },
+};
 
 @Component({
   selector: 'app-workspace-page',
   standalone: true,
   imports: [
-    CommonModule,
+    AppRailComponent,
+    CommandPaletteComponent,
     DataSourcesPanelComponent,
     DatasetSelectorComponent,
+    DiffControlsComponent,
+    DiffViewComponent,
+    HistoryPanelComponent,
+    OrientationStripComponent,
+    TourComponent,
+    QlIconComponent,
+    QlSegmentedComponent,
     QueryBuilderComponent,
     QueryEditorComponent,
+    ResultsBentoComponent,
     ResultsTableComponent,
+    ScenarioListComponent,
     TransformPanelComponent,
-    DiffPanelComponent,
-    HistoryPanelComponent,
   ],
   templateUrl: './workspace-page.component.html',
   styleUrl: './workspace-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class WorkspacePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly appModeService = inject(AppModeService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly store = inject(QueryStore);
-  protected readonly presets = QUERY_PRESETS;
-  protected readonly activePresetId = signal<string>('');
-  protected readonly historyExpanded = signal(true);
-  protected readonly diffExpanded = signal(false);
-  protected readonly selectedDataset = this.store.selectedDataset;
-  protected readonly mode = this.appModeService.mode;
-  protected readonly isDemoMode = this.appModeService.isDemo;
+  protected readonly ui = inject(WorkspaceUiService);
+  protected readonly runner = inject(ScenarioRunnerService);
+  protected readonly palette = inject(CommandRegistryService);
+  protected readonly share = inject(ShareService);
+  private readonly toast = inject(ToastService);
+  protected readonly onboarding = inject(OnboardingService);
+
+  protected readonly editorMode = signal<'visual' | 'json'>('visual');
+  protected readonly editorOptions: SegmentedOption[] = [
+    { value: 'visual', label: 'Visual' },
+    { value: 'json', label: 'JSON' },
+  ];
+  protected readonly panelCopy = computed(() => PANEL_COPY[this.ui.activePanel()]);
+  protected readonly modKey = this.palette.modKey;
 
   private readonly hydratedQueryToken = signal<string | null>(null);
-  private previousMode: 'demo' | 'live' | null = null;
-
-  protected readonly activeDatasetName = computed(() => this.selectedDataset().name);
-  protected readonly activeDatasetDescription = computed(() => this.selectedDataset().description);
-  protected readonly transformationLabel = computed(() => {
-    const transformation = this.store.transformation();
-    if (!transformation) {
-      return 'None';
-    }
-
-    if (transformation.type === 'sort') {
-      return `Sort by ${transformation.field} (${transformation.direction})`;
-    }
-
-    if (transformation.type === 'map') {
-      return `Map ${transformation.fields.length} fields`;
-    }
-
-    return `Group by ${transformation.field} (${transformation.aggregate})`;
-  });
-
-  constructor() {
-    effect(() => {
-      const mode = this.mode();
-      const selected = this.store.selectedDataset();
-      if (this.previousMode !== null && this.previousMode !== mode) {
-        this.activePresetId.set('');
-      }
-      this.previousMode = mode;
-
-      if (mode === 'demo' && selected.source !== 'built-in') {
-        this.store.setDataset('users');
-        this.store.executeQuery();
-        return;
-      }
-
-      if (mode === 'live' && selected.source === 'built-in' && this.store.customDatasets().length > 0) {
-        this.store.setDataset(this.store.customDatasets()[0].id);
-        this.store.executeQuery();
-      }
-    });
-  }
 
   ngOnInit(): void {
+    // On narrow screens the panel is a bottom sheet: start with the results visible.
+    if (typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches) {
+      this.ui.panelOpen.set(false);
+    }
+
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const queryParam = params.get('q');
       if (!queryParam || this.hydratedQueryToken() === queryParam) {
@@ -160,11 +110,16 @@ export class WorkspacePageComponent implements OnInit {
       }
 
       const parsed = deserialize(queryParam);
-      if (!parsed || !this.store.hasDataset(parsed.datasetId)) {
+      if (!parsed) {
+        return;
+      }
+      if (!this.store.hasDataset(parsed.datasetId)) {
+        this.toast.show("That link uses a dataset that isn't in this browser");
         return;
       }
 
       this.hydratedQueryToken.set(queryParam);
+      this.runner.markFirstRunDone();
       this.store.hydrateFrom({
         selectedDatasetId: parsed.datasetId,
         filterTree: parsed.filterTree,
@@ -178,31 +133,36 @@ export class WorkspacePageComponent implements OnInit {
         this.store.applyTransformation(parsed.transformation);
       }
     });
+
+    this.runner.ensureFirstRun();
   }
 
-  protected runPreset(preset: QueryPreset): void {
-    this.activePresetId.set(preset.id);
-    this.store.hydrateFrom({
-      selectedDatasetId: preset.datasetId,
-      filterTree: preset.filterTree,
-      rawQuery: JSON.stringify(preset.filterTree, null, 2),
-      rawQueryError: null,
-      transformation: null,
-      transformedResults: [],
-      activeTab: 'history',
-    });
+  protected run(): void {
+    this.palette.runQuery();
+  }
 
-    this.store.executeQuery();
-    if (preset.transformation) {
-      this.store.applyTransformation(preset.transformation);
+  protected onKeydown(event: KeyboardEvent): void {
+    const mod = event.metaKey || event.ctrlKey;
+    if (mod && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.palette.toggle();
+      return;
+    }
+    if (mod && event.key === 'Enter') {
+      event.preventDefault();
+      this.palette.runQuery();
+      return;
+    }
+    if (this.palette.isOpen() || mod || event.altKey) {
+      return;
+    }
+    if (event.key === '[' && !isTypingTarget(event.target as HTMLElement | null)) {
+      event.preventDefault();
+      this.ui.togglePanel();
     }
   }
 
-  protected toggleHistory(): void {
-    this.historyExpanded.update((value) => !value);
-  }
-
-  protected toggleDiff(): void {
-    this.diffExpanded.update((value) => !value);
+  protected reset(): void {
+    this.store.clearQuery();
   }
 }

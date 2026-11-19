@@ -12,23 +12,30 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { eligibleCategoryFields } from '../../core/insights/bento-data';
+import { formatDateValue } from '../../core/insights/format';
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 import { QueryStore } from '../../store/query.store';
+import { ExportService } from './export.service';
+
+type ColumnKind = 'number' | 'date' | 'category' | 'text';
 
 @Component({
   selector: 'app-results-table',
   standalone: true,
-  imports: [CommonModule, ScrollingModule],
+  imports: [CommonModule, ScrollingModule, QlIconComponent],
   templateUrl: './results-table.component.html',
   styleUrl: './results-table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   protected readonly store = inject(QueryStore);
-  protected readonly rowHeight = 35;
+  protected readonly rowHeight = 36;
   protected readonly searchTerm = signal('');
   protected readonly sortField = signal('');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
   private resizeObserver: ResizeObserver | null = null;
+  private readonly unregisterExport = inject(ExportService).register(this);
 
   @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
   @ViewChild('tableWrapper') private tableWrapper?: ElementRef<HTMLElement>;
@@ -71,6 +78,51 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
     });
   });
 
+  private readonly categoryFields = computed(
+    () => new Set(eligibleCategoryFields(this.store.selectedDataset().fields, this.store.selectedDataset().rows)),
+  );
+
+  /** How each visible column renders: aligned numbers, readable dates, category chips. */
+  protected readonly columnKinds = computed<Record<string, ColumnKind>>(() => {
+    const types = Object.fromEntries(this.store.selectedDataset().fields.map((f) => [f.key, f.type]));
+    const first = this.store.displayedResults()[0] ?? {};
+    const kinds: Record<string, ColumnKind> = {};
+    for (const column of this.columns) {
+      const type = types[column];
+      if (type === 'number' || (!type && typeof first[column] === 'number')) kinds[column] = 'number';
+      else if (type === 'date') kinds[column] = 'date';
+      else if (this.categoryFields().has(column)) kinds[column] = 'category';
+      else kinds[column] = 'text';
+    }
+    return kinds;
+  });
+
+  protected readonly hasRun = computed(() => this.store.lastExecutionMs() !== null);
+
+  protected display(row: Record<string, unknown>, column: string): string {
+    const value = row[column];
+    if (value === null || value === undefined || value === '') {
+      return '—';
+    }
+    const kind = this.columnKinds()[column];
+    if (kind === 'date') {
+      return formatDateValue(value);
+    }
+    if (kind === 'number' && typeof value === 'number') {
+      return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    }
+    return typeof value === 'object' ? JSON.stringify(value) : String(value);
+  }
+
+  protected clearSearch(): void {
+    this.searchTerm.set('');
+  }
+
+  protected clearFilters(): void {
+    this.store.updateFilterTree({ type: 'group', op: 'AND', children: [] });
+    this.store.executeQuery();
+  }
+
   get columns(): string[] {
     const rows = this.store.displayedResults();
     if (rows.length > 0) {
@@ -106,7 +158,7 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
     this.sortDirection.set('asc');
   }
 
-  protected exportCsv(): void {
+  exportCsv(): void {
     const rows = this.rows();
     if (rows.length === 0) {
       return;
@@ -121,7 +173,7 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
     this.download(`querylens-${Date.now()}.csv`, `${header}\n${body}`, 'text/csv');
   }
 
-  protected exportJson(): void {
+  exportJson(): void {
     this.download(`querylens-${Date.now()}.json`, JSON.stringify(this.rows(), null, 2), 'application/json');
   }
 
@@ -143,6 +195,7 @@ export class ResultsTableComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.unregisterExport();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
   }

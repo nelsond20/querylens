@@ -1,16 +1,64 @@
-<div class="selector">
-  <label class="label">Dataset Scope</label>
+<button
+  type="button"
+  class="trigger"
+  cdkOverlayOrigin
+  #origin="cdkOverlayOrigin"
+  (click)="open.set(!open())"
+  [attr.aria-expanded]="open()"
+  aria-haspopup="menu"
+  [attr.aria-label]="'Dataset: ' + current().name + ', ' + rows(current()) + ' rows. Change dataset'"
+>
+  <ql-icon name="database" class="icon" />
+  <span class="name">{{ current().name }}</span>
+  <span class="count num">{{ rows(current()) }} rows</span>
+  <span class="chip" [class.chip--filter]="current().source !== 'built-in'">
+    {{ current().source === 'built-in' ? 'sample' : 'yours' }}
+  </span>
+  <ql-icon name="chevron-down" [size]="14" class="chev" />
+</button>
 
-  @if (datasets.length === 0) {
-    <ql-select [options]="[]" [disabled]="true" placeholder="No datasets available" />
-    @if (mode === 'live') {
-      <span class="hint">Import a dataset from Live Data Sources to begin.</span>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="open.set(false)"
+  (detach)="open.set(false)"
+  (overlayKeydown)="$event.key === 'Escape' && open.set(false)"
+>
+  <div
+    class="menu"
+    role="menu"
+    aria-label="Datasets"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown)="onMenuKeydown($event)"
+  >
+    @for (group of groups(); track group.label) {
+      <div class="group" role="group" [attr.aria-label]="group.label">
+        <p class="group-label">{{ group.label }}</p>
+        @for (dataset of group.datasets; track dataset.id) {
+          <button
+            type="button"
+            role="menuitemradio"
+            class="option"
+            [class.on]="dataset.id === current().id"
+            [attr.aria-checked]="dataset.id === current().id"
+            [attr.cdkFocusInitial]="dataset.id === current().id ? '' : null"
+            (click)="select(dataset.id)"
+          >
+            <span class="opt-name">{{ dataset.name }}</span>
+            <span class="opt-desc">{{ dataset.description }}</span>
+            <span class="opt-count num">{{ rows(dataset) }}</span>
+          </button>
+        }
+      </div>
     }
-  } @else {
-    <ql-select
-      [options]="datasetOptions"
-      [value]="store.selectedDatasetId()"
-      (valueChange)="select($any($event))"
-    />
-  }
-</div>
+    <button type="button" role="menuitem" class="option import" (click)="importData()">
+      <ql-icon name="upload" [size]="14" />
+      <span class="opt-name">Import data…</span>
+    </button>
+  </div>
+</ng-template>
