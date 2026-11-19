@@ -173,9 +173,25 @@ function timelineIndex(allRows: Row[], field: string): TimelineIndex | null {
   return byField.get(field)!;
 }
 
+const MAX_BUCKETS = 240;
+
+function unitFor(min: number, max: number): BucketUnit {
+  const rangeDays = (max - min) / DAY_MS;
+  return rangeDays <= 60 ? 'day' : rangeDays <= 420 ? 'week' : 'month';
+}
+
+function estimateBuckets(min: number, max: number, unit: BucketUnit): number {
+  if (unit === 'month') {
+    const a = new Date(min);
+    const b = new Date(max);
+    return (b.getUTCFullYear() - a.getUTCFullYear()) * 12 + (b.getUTCMonth() - a.getUTCMonth()) + 1;
+  }
+  return Math.floor((max - min) / (unit === 'day' ? DAY_MS : 7 * DAY_MS)) + 2;
+}
+
 function computeTimelineIndex(allRows: Row[], field: string): TimelineIndex | null {
   // Results are usually the same row objects as allRows, so each row is parsed once.
-  const parsed = new Map<Row, number>();
+  let parsed = new Map<Row, number>();
   let min = Infinity;
   let max = -Infinity;
   for (const row of allRows) {
@@ -191,14 +207,36 @@ function computeTimelineIndex(allRows: Row[], field: string): TimelineIndex | nu
     return null;
   }
 
-  const rangeDays = (max - min) / DAY_MS;
-  const unit: BucketUnit = rangeDays <= 60 ? 'day' : rangeDays <= 420 ? 'week' : 'month';
+  let unit = unitFor(min, max);
+  if (estimateBuckets(min, max, unit) > MAX_BUCKETS) {
+    // A few far-off values (a 9999-12-31 sentinel, IDs that parse as years) would squash the real data
+    // into one pixel. Keep the bulk: the 1st–99th percentile range, widened by half its span.
+    const sorted = [...parsed.values()].sort((a, b) => a - b);
+    const p1 = sorted[Math.floor(sorted.length * 0.01)];
+    const p99 = sorted[Math.ceil(sorted.length * 0.99) - 1];
+    const lo = p1 - (p99 - p1) / 2;
+    const hi = p99 + (p99 - p1) / 2;
+    parsed = new Map([...parsed].filter(([, ms]) => ms >= lo && ms <= hi));
+    min = Infinity;
+    max = -Infinity;
+    for (const ms of parsed.values()) {
+      if (ms < min) min = ms;
+      if (ms > max) max = ms;
+    }
+    unit = unitFor(min, max);
+    if (parsed.size < 2 || estimateBuckets(min, max, unit) > MAX_BUCKETS) {
+      return null;
+    }
+  }
 
   const buckets: TimelineBucket[] = [];
   const indexByStart = new Map<number, number>();
   for (let start = bucketStart(min, unit); start <= max; start = nextBucket(start, unit)) {
     indexByStart.set(start, buckets.length);
     buckets.push({ start, label: bucketLabel(start, unit), total: 0, matched: 0 });
+  }
+  if (buckets.length < 2) {
+    return null;
   }
   for (const ms of parsed.values()) {
     buckets[indexByStart.get(bucketStart(ms, unit))!].total++;
