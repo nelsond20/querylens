@@ -23,12 +23,12 @@ export function formatDateValue(value: unknown, timeZone?: string): string {
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone,
     day: 'numeric',
-    month: 'short',
+    month: 'numeric',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
   }).formatToParts(d);
   const get = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? '';
-  return `${get('day')} ${get('month').replace('.', '')} ${get('year')}, ${get('hour')}:${get('minute')}`;
+  return `${Number(get('day'))} ${MONTHS[Number(get('month')) - 1]} ${get('year')}, ${get('hour')}:${get('minute')}`;
 }
