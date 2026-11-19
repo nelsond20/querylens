@@ -1,34 +1,31 @@
 <div class="settings-shell">
   <ql-app-rail />
   <main class="settings-main">
-<section class="settings-page">
-  <article class="setting-card">
-    <h2>Theme</h2>
-    <p>Choose how the interface is rendered in your browser.</p>
+    <div class="content">
+      <h1>Settings</h1>
 
-    <div class="mode-row">
-      <button
-        class="mode-button"
-        [class.active]="theme.preference() === 'light'"
-        (click)="setTheme('light')"
-      >
-        Light
-      </button>
-      <button
-        class="mode-button"
-        [class.active]="theme.preference() === 'dark'"
-        (click)="setTheme('dark')"
-      >
-        Dark
-      </button>
+      <section class="section" aria-labelledby="appearance-title">
+        <div class="text">
+          <h2 id="appearance-title">Appearance</h2>
+          <p>System follows your device's light or dark setting.</p>
+        </div>
+        <ql-segmented
+          label="Theme"
+          [options]="themeOptions"
+          [value]="theme.preference()"
+          (valueChange)="setTheme($event)"
+        />
+      </section>
+
+      <section class="section" aria-labelledby="data-title">
+        <div class="text">
+          <h2 id="data-title">Local data</h2>
+          <p>Removes your imported datasets, saved snapshots and the current query from this browser. This can't be undone.</p>
+        </div>
+        <button type="button" class="btn btn--danger" [class.armed]="confirming()" (click)="clearLocalWorkspace()">
+          {{ confirming() ? 'Click again to confirm' : 'Clear local workspace' }}
+        </button>
+      </section>
     </div>
-  </article>
-
-  <article class="setting-card danger">
-    <h2>Local Data Reset</h2>
-    <p>Clear custom datasets, saved history, and current query state from local storage.</p>
-    <button class="danger-button" (click)="clearLocalWorkspace()">Clear Local Workspace</button>
-  </article>
-</section>
   </main>
 </div>
