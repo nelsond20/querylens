@@ -1,13 +1,7 @@
-Drop local font files in this folder using these exact names:
+Self-hosted fonts (the Content-Security-Policy only allows `font-src 'self'`).
 
-- `Archivo-Variable.woff2`
-- `Archivo-Italic-Variable.woff2`
-- `AzeretMono-Variable.woff2`
+- `Inter-Variable.woff2`: UI and body text (latin subset, from @fontsource-variable/inter 5.1.0, SIL OFL 1.1)
+- `BricolageGrotesque-Variable.woff2`: display and headings (latin subset, from @fontsource-variable/bricolage-grotesque 5.1.0, SIL OFL 1.1)
+- `AzeretMono-Variable.ttf`: JSON editor and inline code only (SIL OFL 1.1)
 
-You can also use `.ttf` with the same base names:
-
-- `Archivo-Variable.ttf`
-- `Archivo-Italic-Variable.ttf`
-- `AzeretMono-Variable.ttf`
-
-These files are loaded by `src/styles.css` to avoid external font requests.
+They're loaded by `src/styles.css`.
