@@ -1,93 +1,117 @@
-<main class="workspace-body">
-  <aside class="panel-left">
-    <section class="preset-panel">
-        <span class="section-title">Scenarios</span>
-        <div class="preset-list">
-          @for (preset of presets; track preset.id) {
-            <button
-              class="preset-item"
-              [class.active]="activePresetId() === preset.id"
-              (click)="runPreset(preset)"
-            >
-              {{ preset.title }}
-            </button>
-          }
-        </div>
-      </section>
+<div class="ws" [class.panel-open]="ui.panelOpen()">
+  <ql-app-rail class="rail" />
 
-    <app-data-sources-panel />
-
+  <header class="top">
     <app-dataset-selector />
-    <app-query-builder />
-    <app-query-editor />
 
-    <div class="query-actions">
-      <button class="btn-run" (click)="store.executeQuery()" [disabled]="store.isExecuting()">
-        {{ store.isExecuting() ? 'Running query...' : 'Run Query' }}
+    <button type="button" class="palette-trigger" data-palette-trigger>
+      <ql-icon name="search" [size]="14" />
+      <span class="palette-label">Search actions, scenarios, datasets…</span>
+      <span class="kbd">{{ modKey }} K</span>
+    </button>
+
+    <div class="top-actions">
+      <button
+        type="button"
+        class="btn btn--quiet btn--icon"
+        data-tour="share"
+        data-copy-link
+        aria-label="Copy share link"
+        title="Copy a link to this exact query"
+      >
+        <ql-icon name="link" />
       </button>
-      <button class="btn-clear" (click)="store.clearQuery()">Reset</button>
+      <button
+        type="button"
+        class="btn btn--primary run"
+        (click)="run()"
+        [disabled]="store.isExecuting() || !!store.rawQueryError()"
+      >
+        <ql-icon name="play" [size]="14" />
+        {{ store.isExecuting() ? 'Running…' : 'Run query' }}
+        <span class="kbd">{{ modKey }} ↵</span>
+      </button>
     </div>
-  </aside>
+  </header>
 
-  <section class="panel-right">
-    <div class="status-bar" role="status" aria-live="polite">
-      @if (store.lastExecutionMs() === null) {
-        <span class="status-idle">No query run yet</span>
-      } @else {
-        <span class="status-segment">
-          <span class="status-num">{{ store.scannedRows() }}</span>
-          <span class="status-lbl">scanned</span>
-        </span>
-        <span class="status-dot" aria-hidden="true">·</span>
-        <span class="status-segment">
-          <span class="status-num">{{ store.resultCount() }}</span>
-          <span class="status-lbl">returned</span>
-        </span>
-        <span class="status-dot" aria-hidden="true">·</span>
-        <span class="status-segment">
-          <span class="status-num">{{ store.matchRate() }}%</span>
-          <span class="status-lbl">match</span>
-        </span>
-        <span class="status-dot" aria-hidden="true">·</span>
-        <span class="status-segment">
-          <span class="status-num">{{ store.lastExecutionMs() }} ms</span>
-          <span class="status-lbl">exec</span>
-        </span>
-        @if (transformationLabel() !== 'None') {
-          <span class="status-dot" aria-hidden="true">·</span>
-          <span class="status-segment">
-            <span class="status-lbl">transform</span>
-            <span class="status-num">{{ transformationLabel() }}</span>
-          </span>
+  @if (ui.panelOpen()) {
+    <aside class="side" [attr.aria-label]="panelCopy().title" [attr.data-stage]="ui.activePanel()">
+      <div class="side-scroll">
+        <div class="panel-head">
+          <h2>{{ panelCopy().title }}</h2>
+          <p>{{ panelCopy().description }}</p>
+        </div>
+
+        @switch (ui.activePanel()) {
+          @case ('query') {
+            <div class="query-panel" data-tour="query">
+              <app-scenario-list />
+              <div class="editor-head">
+                <span class="editor-title">Filters</span>
+                <ql-segmented
+                  label="Editor"
+                  [options]="editorOptions"
+                  [value]="editorMode()"
+                  (valueChange)="editorMode.set($any($event))"
+                />
+              </div>
+              @if (editorMode() === 'visual') {
+                <app-query-builder />
+              } @else {
+                <app-query-editor />
+              }
+              <button type="button" class="btn btn--quiet btn--sm reset" (click)="reset()">Reset query</button>
+            </div>
+          }
+          @case ('transform') {
+            <app-transform-panel />
+          }
+          @case ('history') {
+            <app-history-panel />
+          }
+          @case ('compare') {
+            <app-diff-controls />
+          }
+          @case ('sources') {
+            <app-data-sources-panel />
+          }
         }
-      }
+      </div>
+    </aside>
+  }
+
+  <main class="main" aria-label="Results">
+    <div class="tabs" role="tablist" aria-label="Results view">
+      <button
+        type="button"
+        role="tab"
+        class="tab"
+        [class.on]="ui.mainTab() === 'results'"
+        [attr.aria-selected]="ui.mainTab() === 'results'"
+        (click)="ui.mainTab.set('results')"
+      >
+        Results
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="tab tab--compare"
+        [class.on]="ui.mainTab() === 'diff'"
+        [attr.aria-selected]="ui.mainTab() === 'diff'"
+        [disabled]="!ui.compareSnapshotId()"
+        [title]="ui.compareSnapshotId() ? '' : 'Choose a snapshot in Compare first'"
+        (click)="ui.mainTab.set('diff')"
+      >
+        Diff
+      </button>
     </div>
 
-    <app-results-table class="results-section" />
-    <app-transform-panel />
-
-    <section class="fold-panel">
-      <button class="fold-toggle" (click)="toggleHistory()" [attr.aria-expanded]="historyExpanded()">
-        <span>Query History</span>
-        <span class="chevron" [class.is-open]="historyExpanded()" aria-hidden="true"></span>
-      </button>
-      @if (historyExpanded()) {
-        <div class="fold-body">
-          <app-history-panel />
-        </div>
-      }
-    </section>
-
-    <section class="fold-panel">
-      <button class="fold-toggle" (click)="toggleDiff()" [attr.aria-expanded]="diffExpanded()">
-        <span>Diff Analysis</span>
-        <span class="chevron" [class.is-open]="diffExpanded()" aria-hidden="true"></span>
-      </button>
-      @if (diffExpanded()) {
-        <div class="fold-body">
-          <app-diff-panel />
-        </div>
-      }
-    </section>
-  </section>
-</main>
+    @if (ui.mainTab() === 'results') {
+      <section class="results" data-tour="bento">
+        <app-results-table class="table" />
+      </section>
+    } @else {
+      <app-diff-view />
+    }
+  </main>
+</div>

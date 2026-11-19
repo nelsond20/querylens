@@ -1,35 +1,45 @@
 <div class="history">
-  <div class="meta-row">
-    <span class="meta-label">{{ historyStore.entries().length }} saved snapshots</span>
-  </div>
+  <form class="save" (submit)="$event.preventDefault(); save()">
+    <label class="field-label" for="snapshot-name">Snapshot name</label>
+    <div class="save-row">
+      <input
+        id="snapshot-name"
+        type="text"
+        placeholder="e.g. High-value events, November"
+        [value]="saveName()"
+        (input)="onNameInput($event)"
+      />
+      <button type="submit" class="btn btn--primary" [disabled]="!saveName().trim()">Save</button>
+    </div>
+  </form>
 
-  <div class="save-row">
-    <input
-      class="input"
-      type="text"
-      placeholder="Snapshot name..."
-      [value]="saveName()"
-      (input)="onNameInput($event)"
-    />
-    <button class="btn-save" (click)="save()" [disabled]="!saveName().trim()">Save Snapshot</button>
+  <div class="list-head">
+    <span>Saved snapshots</span>
+    <span class="num">{{ historyStore.entries().length }}</span>
   </div>
 
   @if (historyStore.entries().length === 0) {
-    <div class="empty">No saved snapshots yet.</div>
+    <p class="empty">Nothing saved yet. Snapshots stay in this browser and can be compared in Compare.</p>
   } @else {
-    <div class="entries">
+    <ul class="entries">
       @for (entry of historyStore.entries(); track entry.id) {
-        <div class="entry">
-          <div class="entry-info">
-            <span class="entry-name">{{ entry.name }}</span>
-            <span class="entry-meta">{{ entry.datasetId }} · {{ entry.savedAt | date: 'dd/MM/yy HH:mm' }}</span>
+        <li class="entry">
+          <div class="info">
+            <span class="name">{{ entry.name }}</span>
+            <span class="meta">{{ datasetName(entry.datasetId) }}, {{ entry.savedAt | date: 'd MMM, HH:mm' }}</span>
           </div>
-          <div class="entry-actions">
-            <button class="btn-load" (click)="load(entry.id)">Load</button>
-            <button class="btn-delete" (click)="delete(entry.id)">x</button>
-          </div>
-        </div>
+          <button type="button" class="btn btn--ghost btn--sm" (click)="load(entry.id)">Load</button>
+          <button
+            type="button"
+            class="delete"
+            (click)="delete(entry.id)"
+            [attr.aria-label]="'Delete snapshot ' + entry.name"
+            title="Delete snapshot"
+          >
+            <ql-icon name="x" [size]="14" />
+          </button>
+        </li>
       }
-    </div>
+    </ul>
   }
 </div>

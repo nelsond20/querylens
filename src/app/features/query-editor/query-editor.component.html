@@ -1,16 +1,20 @@
 <div class="editor">
-  <span class="label">JSON Editor</span>
   <textarea
-    class="textarea"
+    class="code"
+    aria-label="Filter as JSON"
     [class.has-error]="store.rawQueryError()"
+    [attr.aria-invalid]="!!store.rawQueryError()"
+    [attr.aria-describedby]="store.rawQueryError() ? 'json-error' : 'json-hint'"
     [value]="store.rawQuery()"
     (input)="onInput($event)"
     spellcheck="false"
     autocomplete="off"
-    rows="8"
+    rows="14"
   ></textarea>
 
   @if (store.rawQueryError()) {
-    <span class="error">{{ store.rawQueryError() }}</span>
+    <p id="json-error" class="error" role="alert">{{ store.rawQueryError() }}. Fix it to run the query.</p>
+  } @else {
+    <p id="json-hint" class="hint">Edits here update the visual builder, and the other way around.</p>
   }
 </div>

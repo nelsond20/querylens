@@ -1,5 +1,6 @@
 <div class="condition">
   <ql-select
+    class="field"
     [compact]="true"
     [options]="fieldOptions"
     [value]="condition.field"
@@ -7,9 +8,10 @@
   />
 
   @if (fieldType === 'boolean') {
-    <span class="operator-fixed" aria-label="Equals operator">=</span>
+    <span class="operator-fixed" aria-label="equals">=</span>
   } @else {
     <ql-select
+      class="operator"
       [compact]="true"
       [options]="operatorOptions"
       [value]="condition.operator"
@@ -17,20 +19,26 @@
     />
   }
 
+  <button type="button" class="remove" (click)="remove.emit()" aria-label="Remove condition" title="Remove condition">
+    <ql-icon name="x" [size]="14" />
+  </button>
+
   @if (fieldType === 'boolean') {
     <select
-      class="input boolean-select"
+      class="value"
+      aria-label="Value"
       [value]="valueAsText === 'true' || valueAsText === 'false' ? valueAsText : ''"
       (change)="updateValue($any($event.target).value)"
     >
-      <option value="" disabled>Select value</option>
+      <option value="" disabled>Choose a value</option>
       <option value="true">true</option>
       <option value="false">false</option>
     </select>
   } @else {
     <input
-      class="input"
-      [type]="fieldType === 'date' ? 'date' : 'text'"
+      class="value"
+      aria-label="Value"
+      [type]="fieldType === 'date' && condition.operator !== 'in' && condition.operator !== 'notIn' ? 'date' : 'text'"
       [attr.inputmode]="fieldType === 'number' ? 'decimal' : null"
       [value]="localValue()"
       (input)="onInputChange($any($event.target).value)"
@@ -38,6 +46,4 @@
       [placeholder]="inputPlaceholder"
     />
   }
-
-  <button class="btn-remove" (click)="remove.emit()" title="Remove condition" aria-label="Remove condition">×</button>
 </div>

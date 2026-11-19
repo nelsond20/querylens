@@ -10,10 +10,11 @@
   justify-content: space-between;
   width: 100%;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  height: 34px;
+  padding: 0 10px;
   background: var(--surface);
-  border: 1px solid var(--border-sub);
-  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  border-radius: var(--r-input);
   color: var(--text);
   cursor: pointer;
   text-align: left;
@@ -29,7 +30,7 @@
 
 :host(.is-open) .trigger {
   border-color: var(--accent);
-  background: var(--surface-hi);
+  box-shadow: 0 0 0 3px var(--stage-filter-wash);
 }
 
 .trigger:focus-visible {
@@ -43,13 +44,14 @@
 }
 
 :host(.is-compact) .trigger {
-  padding: var(--space-1) var(--space-2);
+  height: 30px;
+  padding: 0 8px;
 }
 
 .trigger-value {
   flex: 1;
   min-width: 0;
-  font-size: var(--text-base);
+  font-size: var(--text-13);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -87,15 +89,14 @@
 .dropdown {
   position: fixed;
   z-index: 300;
-  background: var(--surface-hi);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: var(--space-1) 0;
-  max-height: 220px;
+  border-radius: var(--r-cond);
+  padding: 4px;
+  min-width: 160px;
+  max-height: 260px;
   overflow-y: auto;
-  box-shadow:
-    0 0 0 1px var(--border-sub),
-    0 8px 24px oklch(14% 0.004 220 / 0.12);
+  box-shadow: var(--shadow-float);
   animation: dropdown-enter var(--dur-base) var(--ease-expo) both;
 }
 
@@ -115,11 +116,12 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--space-2) var(--space-3);
+  padding: 7px 10px;
+  border-radius: 6px;
   background: transparent;
   border: none;
   color: var(--text-soft);
-  font-size: var(--text-sm);
+  font-size: var(--text-13);
   text-align: left;
   cursor: pointer;
   gap: var(--space-3);
@@ -129,13 +131,13 @@
 }
 
 .option:hover:not(:disabled) {
-  background: color-mix(in oklch, var(--accent) 8%, var(--surface-hi));
+  background: var(--surface-hi);
   color: var(--text);
 }
 
 .option.is-selected {
   color: var(--text);
-  background: color-mix(in oklch, var(--accent) 5%, var(--surface-hi));
+  background: var(--stage-filter-wash);
 }
 
 .option:disabled {

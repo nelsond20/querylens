@@ -1,94 +1,71 @@
 <div class="panel">
-  <button class="toggle" (click)="toggle()" [attr.aria-expanded]="expanded()">
-    <span>Transformation Studio</span>
-    <span class="chevron" [class.is-open]="expanded()" aria-hidden="true"></span>
-  </button>
-
-  @if (expanded()) {
-    <div class="body">
-      <div class="row">
-        <label class="label">Type</label>
-        <ql-select
-          [options]="typeOptions"
-          [value]="type()"
-          (valueChange)="type.set($any($event))"
-        />
-      </div>
-
-      @switch (type()) {
-        @case ('sort') {
-          <div class="row">
-            <label class="label">Field</label>
-            <ql-select
-              [options]="fieldOptions"
-              [value]="sortField()"
-              (valueChange)="sortField.set($any($event))"
-            />
-          </div>
-
-          <div class="row">
-            <label class="label">Direction</label>
-            <ql-select
-              [options]="directionOptions"
-              [value]="sortDirection()"
-              (valueChange)="sortDirection.set($any($event))"
-            />
-          </div>
-        }
-
-        @case ('map') {
-          <div class="field-list">
-            @for (field of fields; track field.key) {
-              <label class="field-check">
-                <input
-                  type="checkbox"
-                  [checked]="mapFields().includes(field.key)"
-                  (change)="toggleMapField(field.key)"
-                />
-                {{ field.label }}
-              </label>
-            }
-          </div>
-        }
-
-        @case ('groupBy') {
-          <div class="row">
-            <label class="label">Group by</label>
-            <ql-select
-              [options]="fieldOptions"
-              [value]="groupField()"
-              (valueChange)="groupField.set($any($event))"
-            />
-          </div>
-
-          <div class="row">
-            <label class="label">Aggregate</label>
-            <ql-select
-              [options]="aggregateOptions"
-              [value]="groupAggregate()"
-              (valueChange)="groupAggregate.set($any($event))"
-            />
-          </div>
-
-          @if (groupAggregate() !== 'count') {
-            <div class="row">
-              <label class="label">Value field</label>
-              <ql-select
-                [options]="fieldOptions"
-                [value]="groupValueField()"
-                (valueChange)="groupValueField.set($any($event))"
-              />
-            </div>
-          }
-        }
-      }
-
-      <div class="actions">
-        <button class="btn-apply" (click)="apply()" [disabled]="store.results().length === 0">Apply</button>
-        <button class="btn-reset" (click)="clearTransformation()" [disabled]="!store.transformation()">
-          Clear
-        </button>
-      </div>
+  @if (store.transformation()) {
+    <div class="active" role="status">
+      <span>A transformation is applied to the results.</span>
+      <button type="button" class="btn btn--quiet btn--sm" (click)="clearTransformation()">Remove it</button>
     </div>
   }
+
+  <ql-segmented
+    class="types"
+    label="Transformation type"
+    [options]="typeOptions"
+    [value]="type()"
+    (valueChange)="type.set($any($event))"
+  />
+
+  <div class="fields">
+    @switch (type()) {
+      @case ('sort') {
+        <p class="explain">Order the result rows by one field.</p>
+        <div class="row">
+          <span class="field-label">Field</span>
+          <ql-select [options]="fieldOptions" [value]="sortField()" placeholder="Choose a field" (valueChange)="sortField.set($any($event))" />
+        </div>
+        <div class="row">
+          <span class="field-label">Direction</span>
+          <ql-select [options]="directionOptions" [value]="sortDirection()" (valueChange)="sortDirection.set($any($event))" />
+        </div>
+      }
+
+      @case ('map') {
+        <p class="explain">Keep only the columns you need.</p>
+        <div class="checks">
+          @for (field of fields; track field.key) {
+            <label class="check" [class.on]="mapFields().includes(field.key)">
+              <input type="checkbox" [checked]="mapFields().includes(field.key)" (change)="toggleMapField(field.key)" />
+              {{ field.label }}
+            </label>
+          }
+        </div>
+      }
+
+      @case ('groupBy') {
+        <p class="explain">Collapse rows into one per value and aggregate them.</p>
+        <div class="row">
+          <span class="field-label">Group by</span>
+          <ql-select [options]="fieldOptions" [value]="groupField()" placeholder="Choose a field" (valueChange)="groupField.set($any($event))" />
+        </div>
+        <div class="row">
+          <span class="field-label">Aggregate</span>
+          <ql-select [options]="aggregateOptions" [value]="groupAggregate()" (valueChange)="groupAggregate.set($any($event))" />
+        </div>
+        @if (groupAggregate() !== 'count') {
+          <div class="row">
+            <span class="field-label">Value field</span>
+            <ql-select [options]="fieldOptions" [value]="groupValueField()" placeholder="Choose a field" (valueChange)="groupValueField.set($any($event))" />
+          </div>
+        }
+      }
+    }
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn apply" (click)="apply()" [disabled]="store.results().length === 0">
+      Apply transformation
+    </button>
+    @if (store.results().length === 0) {
+      <span class="note">Run a query first.</span>
+    }
+  </div>
 </div>

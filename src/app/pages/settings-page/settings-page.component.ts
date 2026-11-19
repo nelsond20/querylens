@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AppRailComponent } from '../../shared/layout/app-rail.component';
 import { ThemePreference, ThemeService } from '../../core/theme.service';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
@@ -7,7 +8,7 @@ import { QueryStore } from '../../store/query.store';
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AppRailComponent],
   templateUrl: './settings-page.component.html',
   styleUrl: './settings-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

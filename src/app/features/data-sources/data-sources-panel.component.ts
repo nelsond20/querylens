@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RuntimeDatasetService } from '../../core/datasets/runtime-dataset.service';
 import { QueryStore } from '../../store/query.store';
 
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
+
 @Component({
   selector: 'app-data-sources-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, QlIconComponent],
   templateUrl: './data-sources-panel.component.html',
   styleUrl: './data-sources-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,7 +17,6 @@ import { QueryStore } from '../../store/query.store';
 export class DataSourcesPanelComponent {
   protected readonly store = inject(QueryStore);
   private readonly runtimeDatasetService = inject(RuntimeDatasetService);
-  protected readonly collapsed = signal(true);
 
   protected readonly apiUrl = signal('');
   protected readonly apiName = signal('');
@@ -83,10 +84,6 @@ export class DataSourcesPanelComponent {
 
   protected removeCustomDataset(id: string): void {
     this.store.removeCustomDataset(id);
-  }
-
-  protected toggleCollapsed(): void {
-    this.collapsed.update((value) => !value);
   }
 
   protected selectImportedDataset(id: string): void {

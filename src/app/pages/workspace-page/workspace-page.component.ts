@@ -1,34 +1,57 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { Scenario, SCENARIOS } from '../../core/scenarios/scenarios';
 import { deserialize } from '../../core/serialization/query-serializer';
 import { DataSourcesPanelComponent } from '../../features/data-sources/data-sources-panel.component';
-import { DiffPanelComponent } from '../../features/diff/diff-panel.component';
+import { DiffControlsComponent } from '../../features/diff/diff-controls.component';
+import { DiffViewComponent } from '../../features/diff/diff-view.component';
 import { HistoryPanelComponent } from '../../features/history/history-panel.component';
 import { DatasetSelectorComponent } from '../../features/query-builder/dataset-selector.component';
 import { QueryBuilderComponent } from '../../features/query-builder/query-builder.component';
 import { QueryEditorComponent } from '../../features/query-editor/query-editor.component';
 import { ResultsTableComponent } from '../../features/results-table/results-table.component';
+import { ScenarioListComponent } from '../../features/scenarios/scenario-list.component';
+import { ScenarioRunnerService } from '../../features/scenarios/scenario-runner.service';
 import { TransformPanelComponent } from '../../features/transformations/transform-panel.component';
+import { AppRailComponent } from '../../shared/layout/app-rail.component';
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
+import { QlSegmentedComponent, SegmentedOption } from '../../shared/ui/ql-segmented/ql-segmented.component';
 import { QueryStore } from '../../store/query.store';
+import { RailItem, WorkspaceUiService } from './workspace-ui.service';
 
 const MAX_SHARED_QUERY_PARAM_LENGTH = 16000;
+
+const PANEL_COPY: Record<RailItem, { title: string; description: string }> = {
+  query: { title: 'Query', description: 'Build filters visually or edit them as JSON.' },
+  transform: { title: 'Transform', description: 'Sort, reshape or group the current results.' },
+  history: { title: 'History', description: 'Save the current query as a snapshot and reload it later.' },
+  compare: {
+    title: 'Compare',
+    description: 'See which rows changed between the current result and a saved snapshot.',
+  },
+  sources: {
+    title: 'Your data',
+    description: 'Import a JSON file or fetch records from an API. Data stays in this browser.',
+  },
+};
 
 @Component({
   selector: 'app-workspace-page',
   standalone: true,
   imports: [
-    CommonModule,
+    AppRailComponent,
     DataSourcesPanelComponent,
     DatasetSelectorComponent,
+    DiffControlsComponent,
+    DiffViewComponent,
+    HistoryPanelComponent,
+    QlIconComponent,
+    QlSegmentedComponent,
     QueryBuilderComponent,
     QueryEditorComponent,
     ResultsTableComponent,
+    ScenarioListComponent,
     TransformPanelComponent,
-    DiffPanelComponent,
-    HistoryPanelComponent,
   ],
   templateUrl: './workspace-page.component.html',
   styleUrl: './workspace-page.component.css',
@@ -39,32 +62,18 @@ export class WorkspacePageComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly store = inject(QueryStore);
-  protected readonly presets = SCENARIOS;
-  protected readonly activePresetId = signal<string>('');
-  protected readonly historyExpanded = signal(true);
-  protected readonly diffExpanded = signal(false);
-  protected readonly selectedDataset = this.store.selectedDataset;
+  protected readonly ui = inject(WorkspaceUiService);
+  protected readonly runner = inject(ScenarioRunnerService);
+
+  protected readonly editorMode = signal<'visual' | 'json'>('visual');
+  protected readonly editorOptions: SegmentedOption[] = [
+    { value: 'visual', label: 'Visual' },
+    { value: 'json', label: 'JSON' },
+  ];
+  protected readonly panelCopy = computed(() => PANEL_COPY[this.ui.activePanel()]);
+  protected readonly modKey = /Mac|iPhone|iPad/.test(globalThis.navigator?.userAgent ?? '') ? '⌘' : 'Ctrl';
 
   private readonly hydratedQueryToken = signal<string | null>(null);
-
-  protected readonly activeDatasetName = computed(() => this.selectedDataset().name);
-  protected readonly activeDatasetDescription = computed(() => this.selectedDataset().description);
-  protected readonly transformationLabel = computed(() => {
-    const transformation = this.store.transformation();
-    if (!transformation) {
-      return 'None';
-    }
-
-    if (transformation.type === 'sort') {
-      return `Sort by ${transformation.field} (${transformation.direction})`;
-    }
-
-    if (transformation.type === 'map') {
-      return `Map ${transformation.fields.length} fields`;
-    }
-
-    return `Group by ${transformation.field} (${transformation.aggregate})`;
-  });
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -83,6 +92,7 @@ export class WorkspacePageComponent implements OnInit {
       }
 
       this.hydratedQueryToken.set(queryParam);
+      this.runner.markFirstRunDone();
       this.store.hydrateFrom({
         selectedDatasetId: parsed.datasetId,
         filterTree: parsed.filterTree,
@@ -96,31 +106,17 @@ export class WorkspacePageComponent implements OnInit {
         this.store.applyTransformation(parsed.transformation);
       }
     });
+
+    this.runner.ensureFirstRun();
   }
 
-  protected runPreset(preset: Scenario): void {
-    this.activePresetId.set(preset.id);
-    this.store.hydrateFrom({
-      selectedDatasetId: preset.datasetId,
-      filterTree: preset.filterTree,
-      rawQuery: JSON.stringify(preset.filterTree, null, 2),
-      rawQueryError: null,
-      transformation: null,
-      transformedResults: [],
-      activeTab: 'history',
-    });
-
-    this.store.executeQuery();
-    if (preset.transformation) {
-      this.store.applyTransformation(preset.transformation);
+  protected run(): void {
+    if (!this.store.rawQueryError()) {
+      this.store.executeQuery();
     }
   }
 
-  protected toggleHistory(): void {
-    this.historyExpanded.update((value) => !value);
-  }
-
-  protected toggleDiff(): void {
-    this.diffExpanded.update((value) => !value);
+  protected reset(): void {
+    this.store.clearQuery();
   }
 }

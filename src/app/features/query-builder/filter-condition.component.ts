@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { QlIconComponent } from '../../shared/ui/ql-icon/ql-icon.component';
 import { FieldDefinition } from '../../core/datasets/field-definition.model';
 import { FilterCondition } from '../../core/query-engine/filter-node.model';
 import { Operator } from '../../core/query-engine/operator.model';
@@ -37,7 +38,7 @@ const OPERATORS_BY_TYPE: Record<FieldDefinition['type'], { value: Operator; labe
 @Component({
   selector: 'app-filter-condition',
   standalone: true,
-  imports: [CommonModule, QlSelectComponent],
+  imports: [CommonModule, QlSelectComponent, QlIconComponent],
   templateUrl: './filter-condition.component.html',
   styleUrl: './filter-condition.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -124,8 +125,8 @@ export class FilterConditionComponent implements OnChanges {
 
   get inputPlaceholder(): string {
     if (this.condition.operator === 'in' || this.condition.operator === 'notIn') {
-      return 'value1, value2, value3';
+      return 'Comma-separated, e.g. a, b, c';
     }
-    return 'value';
+    return 'Value';
   }
 }
