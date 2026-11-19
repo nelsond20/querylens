@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AppMode, AppModeService } from '../../core/app-mode.service';
-import { ThemeService } from '../../core/theme.service';
+import { ThemePreference, ThemeService } from '../../core/theme.service';
 import { HistoryStore } from '../../store/history.store';
 import { QueryStore } from '../../store/query.store';
 
@@ -15,26 +13,9 @@ import { QueryStore } from '../../store/query.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent {
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-
-  protected readonly appMode = inject(AppModeService);
   protected readonly theme = inject(ThemeService);
   protected readonly historyStore = inject(HistoryStore);
   protected readonly queryStore = inject(QueryStore);
-
-  protected setMode(mode: AppMode): void {
-    if (this.appMode.mode() !== mode) {
-      this.queryStore.resetForMode(mode);
-    }
-
-    this.appMode.setMode(mode);
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { mode },
-      queryParamsHandling: 'merge',
-    });
-  }
 
   protected clearLocalWorkspace(): void {
     this.historyStore.clearAll();
@@ -42,7 +23,7 @@ export class SettingsPageComponent {
     this.queryStore.clearQuery();
   }
 
-  protected setTheme(mode: 'light' | 'dark'): void {
-    this.theme.setDark(mode === 'dark');
+  protected setTheme(preference: ThemePreference): void {
+    this.theme.setPreference(preference);
   }
 }
