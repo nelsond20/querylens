@@ -35,7 +35,11 @@
   </header>
 
   @if (ui.panelOpen()) {
+    <div class="sheet-backdrop" (click)="ui.panelOpen.set(false)" aria-hidden="true"></div>
     <aside class="side" [attr.aria-label]="panelCopy().title" [attr.data-stage]="ui.activePanel()">
+      <button type="button" class="sheet-close" (click)="ui.panelOpen.set(false)" aria-label="Close panel">
+        <ql-icon name="x" [size]="14" />
+      </button>
       <div class="side-scroll">
         <div class="panel-head">
           <h2>{{ panelCopy().title }}</h2>

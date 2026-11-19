@@ -72,7 +72,7 @@ h1 {
   }
 }
 
-@container (max-width: 380px) {
+@container (max-width: 300px) {
   .metrics {
     grid-template-columns: minmax(0, 1fr);
   }

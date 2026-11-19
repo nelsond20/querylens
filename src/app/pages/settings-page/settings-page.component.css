@@ -62,3 +62,15 @@ h2 {
     padding: 32px 16px 48px;
   }
 }
+
+@media (max-width: 899px) {
+  .settings-shell {
+    display: block;
+    height: auto;
+  }
+
+  .settings-main {
+    overflow: visible;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+}

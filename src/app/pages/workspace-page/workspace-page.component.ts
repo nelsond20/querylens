@@ -94,6 +94,11 @@ export class WorkspacePageComponent implements OnInit {
   private readonly hydratedQueryToken = signal<string | null>(null);
 
   ngOnInit(): void {
+    // On narrow screens the panel is a bottom sheet: start with the results visible.
+    if (typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches) {
+      this.ui.panelOpen.set(false);
+    }
+
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const queryParam = params.get('q');
       if (!queryParam || this.hydratedQueryToken() === queryParam) {
