@@ -11,6 +11,11 @@ describe('formatDateValue', () => {
     expect(formatDateValue('2024-11-12T14:02:00.000Z', 'UTC')).toBe('12 Nov 2024, 14:02');
   });
 
+  it('uses three-letter month names for every month', () => {
+    expect(formatDateValue('2024-09-09T08:05:00.000Z', 'UTC')).toBe('9 Sep 2024, 08:05');
+    expect(formatDateValue('2024-06-30T23:59:00.000Z', 'UTC')).toBe('30 Jun 2024, 23:59');
+  });
+
   it('returns the raw text for values that are not dates', () => {
     expect(formatDateValue('soon')).toBe('soon');
     expect(formatDateValue(null)).toBe('');
