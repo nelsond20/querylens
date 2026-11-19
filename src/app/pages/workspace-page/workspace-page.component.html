@@ -1,7 +1,6 @@
-<main class="workspace-body" [class.demo-mode]="isDemoMode()" [class.live-mode]="!isDemoMode()">
+<main class="workspace-body">
   <aside class="panel-left">
-    @if (isDemoMode()) {
-      <section class="preset-panel">
+    <section class="preset-panel">
         <span class="section-title">Scenarios</span>
         <div class="preset-list">
           @for (preset of presets; track preset.id) {
@@ -15,13 +14,10 @@
           }
         </div>
       </section>
-    }
 
-    @if (!isDemoMode()) {
-      <app-data-sources-panel />
-    }
+    <app-data-sources-panel />
 
-    <app-dataset-selector [mode]="mode()" />
+    <app-dataset-selector />
     <app-query-builder />
     <app-query-editor />
 

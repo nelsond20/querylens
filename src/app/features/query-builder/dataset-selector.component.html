@@ -1,16 +1,1 @@
-<div class="selector">
-  <label class="label">Dataset Scope</label>
-
-  @if (datasets.length === 0) {
-    <ql-select [options]="[]" [disabled]="true" placeholder="No datasets available" />
-    @if (mode === 'live') {
-      <span class="hint">Import a dataset from Live Data Sources to begin.</span>
-    }
-  } @else {
-    <ql-select
-      [options]="datasetOptions"
-      [value]="store.selectedDatasetId()"
-      (valueChange)="select($any($event))"
-    />
-  }
-</div>
+<ql-select [options]="options()" [value]="store.selectedDatasetId()" (valueChange)="select($any($event))" />
